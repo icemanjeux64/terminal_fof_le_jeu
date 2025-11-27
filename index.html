@@ -566,18 +566,12 @@
                 { txt: "Je dois rapporter ça au QG.", next: 'story_lvl2_report' }
             ]
         },
+        // Branche 1: "Pourquoi moi"
         'story_lvl2_why': {
             msg: "Parce que j'ai besoin de quelqu'un de 'propre'. Quelqu'un qui n'est pas encore corrompu par le système.",
             choices: [
                 { txt: "Merci de me faire confiance.", next: 'story_lvl2_thanks' },
                 { txt: "Qui vous dit que je suis propre ?", next: 'story_lvl2_clean_doubt' }
-            ]
-        },
-        'story_lvl2_report': {
-            msg: "Le QG ? Ils savent déjà. C'est eux qui ont classifié ces dossiers. Tu veux te jeter dans la gueule du loup ?",
-            choices: [
-                { txt: "Alors qui croire ?", next: 'story_lvl2_trust' },
-                { txt: "Je fais mon devoir.", next: 'story_lvl2_duty' }
             ]
         },
         'story_lvl2_thanks': {
@@ -594,71 +588,71 @@
                 { txt: "Vous m'espionnez ?", next: 'story_lvl2_spy' }
             ]
         },
-        'story_lvl2_trust': { msg: "Personne. Même pas moi. Vérifie tout. Doute de tout. C'est la seule règle.", choices: [{txt:"C'est noté.", next: 'END_CONVERSATION'}] },
-        'story_lvl2_duty': { msg: "Ton devoir est de survivre. Pas de servir de fusible à des bureaucrates.", choices: [{txt:"Je m'en souviendrai.", next: 'END_CONVERSATION'}] },
-        'story_lvl2_fate': { msg: "C'est ce qu'on verra. Le pouvoir a tendance à noircir les âmes les plus pures dès qu'on leur donne un accès root.", choices: [{txt:"Testez-moi.", next: 'END_CONVERSATION'}] },
-        'story_lvl2_used': { msg: "Dans cette guerre de l'ombre, tout le monde utilise tout le monde. Je suis juste le seul à te l'avouer en face.", choices: [{txt:"C'est clair.", next: 'END_CONVERSATION'}] },
+        // Branche 2: "Rapport QG"
+        'story_lvl2_report': {
+            msg: "Le QG ? Ils savent déjà. C'est eux qui ont classifié ces dossiers. Tu veux te jeter dans la gueule du loup ?",
+            choices: [
+                { txt: "Alors qui croire ?", next: 'story_lvl2_trust' },
+                { txt: "Je fais mon devoir.", next: 'story_lvl2_duty' }
+            ]
+        },
+        // Suite et fin branche 1
+        'story_lvl2_fate': { msg: "C'est ce qu'on verra. Le pouvoir a tendance à noircir les âmes les plus pures dès qu'on leur donne un accès root.", choices: [{txt:"Testez-moi.", next: 'story_lvl2_test'}] },
+        'story_lvl2_used': { msg: "Dans cette guerre de l'ombre, tout le monde utilise tout le monde. Je suis juste le seul à te l'avouer en face.", choices: [{txt:"Au moins c'est clair.", next: 'story_lvl2_clear'}] },
         'story_lvl2_honesty': { msg: "Elle paie en sommeil. Tu dors mieux que tes supérieurs, crois-moi.", choices: [{txt:"Pas faux.", next: 'END_CONVERSATION'}] },
         'story_lvl2_spy': { msg: "Je 'veille'. C'est mon travail. Si je ne t'avais pas espionné, tu serais déjà grillé par la sécurité.", choices: [{txt:"Super...", next: 'END_CONVERSATION'}] },
+        
+        'story_lvl2_test': { msg: "Le test est en cours. Chaque commande que tu tapes définit ton camp. Ne te trompe pas d'ennemi.", choices: [{txt:"Qui est le vrai ennemi ?", next: 'END_CONVERSATION'}] },
+        'story_lvl2_clear': { msg: "La clarté est une arme rare. Garde-la.", choices: [{txt:"Je le ferai.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 3 (L'AUDIO ET LA SÉCURITÉ) ---
-        // Avant le quiz audio
+        // Suite et fin branche 2
+        'story_lvl2_trust': { msg: "Personne. Même pas moi. Vérifie tout. Doute de tout. C'est la seule règle.", choices: [{txt:"C'est noté.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_duty': { msg: "Ton devoir est de survivre. Pas de servir de fusible à des bureaucrates.", choices: [{txt:"Je m'en souviendrai.", next: 'END_CONVERSATION'}] },
+
+
+        // --- STORY BEATS - LEVEL 3 (Projet 74) ---
         'story_after_lvl3': {
-            msg: "Le message parlait d'un fichier audio. Je l'ai isolé. Analyse-le. Mais attention, le système exigera une confirmation d'identité.",
+            msg: "Date confirmée. J'extrais les coordonnées cachées dans l'audio... Attends... 54.255 Nord, 58.103 Est. Ça ne me dit rien de bon.",
             choices: [
-                { txt: "Quel genre de confirmation ?", next: 'story_lvl3_secu' },
-                { txt: "Je lance l'analyse.", next: 'story_lvl3_go' }
+                { txt: "C'est où ?", next: 'story_lvl3_where' },
+                { txt: "Je lance la recherche.", next: 'story_lvl3_search' }
             ]
         },
-        'story_lvl3_secu': { msg: "Un protocole anti-intrusion. Il te posera une question sur une opération récente pour vérifier que tu es un agent actif.", choices: [{txt:"Je suis prêt.", next: 'END_CONVERSATION'}] },
-        'story_lvl3_go': { msg: "Vas-y. Mais si tu échoues au test de sécurité, on sera déconnectés.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
+        'story_lvl3_where': { msg: "C'est ce que tu dois trouver. Utilise tes outils externes. Google Maps est ton ami. Cherche ce qu'il y a à ces coordonnées.", choices: [{txt:"Je m'en occupe.", next: 'END_CONVERSATION'}] },
+        'story_lvl3_search': { msg: "Fais vite. Si ces coordonnées sont ce que je pense, on est assis sur un volcan.", choices: [{txt:"Je cherche.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 4 (DATE VALIDÉE - COORDONNÉES) ---
-        // Après le quiz audio réussi
+        // --- STORY BEATS - LEVEL 4 (CIBLAGE) ---
         'story_after_lvl4': {
-            msg: "Date confirmée. Accès déverrouillé. J'ai extrait les coordonnées cachées dans le spectre audio : 54.255 Nord, 58.103 Est.",
-            choices: [
-                { txt: "Qu'est-ce qu'il y a là-bas ?", next: 'story_lvl4_what' },
-                { txt: "Je cherche sur la carte.", next: 'story_lvl4_search' }
-            ]
-        },
-        'story_lvl4_what': { msg: "C'est ce que tu dois me dire. Utilise tes outils externes (Google Maps). C'est un lieu géographique précis, pas une ville.", choices: [{txt:"Je m'en occupe.", next: 'END_CONVERSATION'}] },
-        'story_lvl4_search': { msg: "Fais vite. Si ces coordonnées sont ce que je pense, on est assis sur un volcan.", choices: [{txt:"Je cherche.", next: 'END_CONVERSATION'}] },
-
-        // --- STORY BEATS - LEVEL 5 (YAMANTAU - OBSIDIAN) ---
-        // Après avoir ciblé Yamantau
-        'story_after_lvl5': {
             msg: "Yamantau... Je le savais. La montagne maudite. C'est là qu'ils se cachent. Le dossier 'PROFIL_X' est accessible.",
             choices: [
-                { txt: "Qui se cache ?", next: 'story_lvl5_who' },
-                { txt: "Je consulte le dossier.", next: 'story_lvl5_read' }
+                { txt: "Qui se cache ?", next: 'story_lvl4_who' },
+                { txt: "Je consulte le dossier.", next: 'story_lvl4_lock' }
             ]
         },
-        'story_lvl5_who': { msg: "L'ennemi a un nom de code. Trouve-le dans le dossier et identifie-le. On doit savoir qui on affronte.", choices: [{txt:"Je regarde.", next: 'END_CONVERSATION'}] },
-        'story_lvl5_read': { msg: "Cherche l'indice sur la roche noire. C'est la clé de son identité.", choices: [{txt:"Reçu.", next: 'END_CONVERSATION'}] },
+        'story_lvl4_who': { msg: "L'ennemi a un nom de code. Trouve-le dans le dossier et identifie-le. On doit savoir qui on affronte.", choices: [{txt:"Je regarde.", next: 'END_CONVERSATION'}] },
+        'story_lvl4_lock': { msg: "Cherche l'indice sur la roche noire. C'est la clé de son identité.", choices: [{txt:"Reçu.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 6 (OBSIDIAN - BOMBE) ---
-        // Après avoir identifié Obsidian
-        'story_after_lvl6': {
+        // --- STORY BEATS - LEVEL 5 (OBSIDIAN) ---
+        'story_after_lvl5': {
             msg: "OBSIDIAN ! Je pensais que c'était une légende... ATTENTION ! DÉTECTION DE LANCEMENT !",
             choices: [
-                { txt: "De quoi ?!", next: 'story_lvl6_panic' }
+                { txt: "De quoi ?!", next: 'story_lvl5_bomb' }
             ]
         },
-        'story_lvl6_panic': { msg: "Il sait qu'on l'a trouvé ! Il active la bombe K-79 à distance ! Désamorce-la immédiatement ou tout est fini !", choices: [{txt:"Merde !", next: 'END_CONVERSATION'}] },
+        'story_lvl5_bomb': { msg: "Il sait qu'on l'a trouvé ! Il active la bombe K-79 à distance ! Désamorce-la immédiatement ou tout est fini !", choices: [{txt:"Merde !", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 7 (APRÈS BOMBE - LA TRAQUE) ---
-        'story_after_lvl7': {
+        // --- STORY BEATS - LEVEL 6 (APRÈS BOMBE - LA TRAQUE) ---
+        'story_after_lvl6': {
             msg: "C'était moins une. La bombe est inerte. Joli travail. Maintenant, finis le boulot. Trace le signal d'activation.",
             choices: [
-                { txt: "Pourquoi faire ?", next: 'story_lvl7_why' },
-                { txt: "Je lance le traçage.", next: 'story_lvl7_trace' }
+                { txt: "Pourquoi faire ?", next: 'story_lvl6_why' },
+                { txt: "Je lance le traçage.", next: 'story_lvl6_trace' }
             ]
         },
-        'story_lvl7_why': { msg: "Pour trouver l'IP source. Obsidian ne travaille jamais seul. Regarde les LOGS et utilise la commande TRACER.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
-        'story_lvl7_trace': { msg: "Trouve l'IP source dans le fichier 'LOGS_ACTIVATION.txt' et remonte la piste. On doit savoir d'où ça vient.", choices: [{txt:"Je m'y mets.", next: 'END_CONVERSATION'}] },
+        'story_lvl6_why': { msg: "Pour trouver l'IP source. Obsidian ne travaille jamais seul. Regarde les LOGS et utilise la commande TRACER.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
+        'story_lvl6_trace': { msg: "Trouve l'IP source dans le fichier 'LOGS_ACTIVATION.txt' et remonte la piste. On doit savoir d'où ça vient.", choices: [{txt:"Je m'y mets.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 8 (RÉVÉLATION) ---
+        // --- STORY BEATS - LEVEL 7 (LA RÉVÉLATION) ---
         'revelation_start': {
             msg: "Je vois que tu as trouvé l'IP. Et tu as compris à qui elle appartient.",
             choices: [
@@ -819,7 +813,7 @@
     }
 
     // --- BOOT SEQUENCE ---
-    const TEAM_NAMES = ['FURY', 'ICEMAN', 'NICOLSTAFF73', 'AZEN', 'OLIV', 'MIKO-DÉDÉ', 'DAMIEN'];
+    const TEAM_NAMES = ['FURIES', 'ICEMAN', 'NICOLSTAFF', 'AZEN', 'OLIV', 'MIKODÉDÉ', 'DAMIEN'];
     
     function startBootSequence() {
         document.getElementById('launch-btn').style.display = 'none';
@@ -956,6 +950,7 @@
         chatChoices.innerHTML = "";
         textInputContainer.style.display = "none";
         
+        // Si plus de choix (fin de conversation ou pas de 'choices'), on vérifie si c'était une fin
         if (!choices || choices.length === 0) return;
 
         choices.forEach(choice => {
@@ -1132,8 +1127,11 @@
                 const enemy = args.join(" ").toUpperCase();
                 if(enemy.includes("OBSIDIAN") || enemy.includes("OBSIDIENNE")) {
                     print("IDENTITÉ CONFIRMÉE : OBSIDIAN.", "success");
-                    print("INTERCEPTION DES DONNÉES EN COURS...", "dim");
-                    setTimeout(() => nextLevel(), 1500);
+                    print("ALERTE : DÉTECTION DE LANCEMENT IMMINENT.", "red-glow");
+                    setTimeout(() => {
+                        nextLevel();
+                        startBombSequence();
+                    }, 2000);
                 } else {
                     print("IDENTITÉ INCORRECTE.", "error");
                     registerFailure();
