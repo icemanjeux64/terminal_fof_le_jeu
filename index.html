@@ -488,8 +488,8 @@
 </div>
 
 <script>
-    // ... existing script content ...
     // --- VARIABLES GLOBALES DOM ---
+    // Déclaration unique au début du script pour éviter les ReferenceError et SyntaxError
     const outputDiv = document.getElementById('output');
     const inputField = document.getElementById('command-input');
     const promptSpan = document.querySelector('.prompt');
@@ -500,8 +500,6 @@
     const chatInput = document.getElementById('chat-input');
     const bombTimerDiv = document.getElementById('bomb-timer');
     const chatHeader = document.getElementById('chat-header');
-
-    // ... (Le reste du script reste identique) ...
 
     // --- LORE & DATA ---
     const FILES = {
@@ -697,6 +695,18 @@
         'hint_lvl7_1': { msg: "Regarde le fichier TRACE_RESEAU.log pour trouver l'IP.", choices: [] },
         'hint_lvl7_2': { msg: "L'IP est celle du Proxy Admin : 10.24.88.99.", choices: [] },
         'hint_lvl7_3': { msg: "Tape 'TRACER 10.24.88.99'.", choices: [] }
+    };
+
+    const GAME_STATE = {
+        level: 0,
+        bombTime: 90, 
+        bombActive: false,
+        bombSerial: Math.floor(Math.random() * 1000) + 1000, 
+        bombVoltage: Math.floor(Math.random() * 500) + 700, 
+        hackerActive: false, 
+        chatOpen: false,     
+        wiresCut: { red: false, blue: false, green: false },
+        failCount: 0 
     };
 
     // --- DRAG & DROP ---
