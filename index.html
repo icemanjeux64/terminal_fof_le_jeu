@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FORCE OPÉRATIONNELLE - PROTOCOLE MATRIOCHKA [CLASSIFIED]</title>
     <style>
         :root {
@@ -17,6 +17,10 @@
 
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             background-color: #000;
             color: var(--term-green);
@@ -24,6 +28,7 @@
             margin: 0;
             padding: 0;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -44,10 +49,10 @@
         }
 
         #boot-log {
-            width: 80%;
-            height: 70%;
+            width: 90%;
+            height: 60%;
             overflow: hidden;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #444; 
             text-align: left;
             margin-bottom: 20px;
@@ -67,8 +72,8 @@
             background: transparent;
             border: 2px solid var(--term-green);
             color: var(--term-green);
-            padding: 20px 40px;
-            font-size: 2rem;
+            padding: 15px 30px;
+            font-size: 1.5rem;
             font-family: 'VT323', monospace;
             cursor: pointer;
             text-transform: uppercase;
@@ -77,7 +82,7 @@
             animation: pulse-btn 2s infinite;
         }
 
-        #launch-btn:hover {
+        #launch-btn:hover, #launch-btn:active {
             background: var(--term-green);
             color: #000;
             box-shadow: 0 0 30px var(--term-green);
@@ -151,6 +156,7 @@
             flex-direction: column;
             font-size: 1.1rem;
             border-left: 1px solid #000;
+            min-width: 200px;
         }
 
         #output {
@@ -170,6 +176,7 @@
             padding-top: 10px;
             margin-top: 10px;
             background: var(--term-bg);
+            flex-shrink: 0;
         }
 
         .prompt {
@@ -187,6 +194,7 @@
             font-size: 1.3rem;
             flex-grow: 1;
             outline: none;
+            width: 100%;
         }
 
         /* --- STYLES DU CHAT (L'HOMME DE GLACE) --- */
@@ -205,7 +213,7 @@
         }
         
         #hacker-modal.minimized {
-            height: 35px;
+            height: 40px;
             width: 250px;
             overflow: hidden;
             bottom: 0;
@@ -216,17 +224,23 @@
         #chat-header {
             background: var(--term-ice);
             color: #000;
-            padding: 5px 10px;
+            padding: 8px 10px;
             font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: grab;
             letter-spacing: 1px;
+            touch-action: none;
         }
         #chat-header:active { cursor: grabbing; }
 
-        .chat-controls span { margin-left: 10px; cursor: pointer; padding: 0 5px; }
+        .chat-controls span { 
+            margin-left: 15px; 
+            cursor: pointer; 
+            padding: 2px 8px; 
+            background: rgba(0,0,0,0.1);
+        }
         .chat-controls span:hover { background: #fff; color: var(--term-ice); }
 
         #chat-history {
@@ -285,20 +299,20 @@
             font-size: 1.1rem;
         }
 
-        #chat-choices { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+        #chat-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
 
         .choice-btn {
-            background: rgba(0, 20, 40, 0.5);
+            background: rgba(0, 20, 40, 0.8);
             border: 1px solid var(--term-ice);
             color: var(--term-ice);
-            padding: 8px;
+            padding: 10px;
             text-align: left;
             cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
             transition: all 0.2s;
         }
-        .choice-btn:hover { background: var(--term-ice); color: #000; }
+        .choice-btn:hover, .choice-btn:active { background: var(--term-ice); color: #000; }
 
         /* Timer Bomb */
         #bomb-timer {
@@ -335,9 +349,71 @@
         .info { color: #88ff88; }
         .dim { color: var(--term-dim); }
         
+        /* --- MOBILE ADAPTATIONS --- */
         @media (max-width: 800px) {
-            #hacker-modal { width: 90%; height: 40%; bottom: 5%; right: 5%; }
-            #terminal-layout { flex-direction: column-reverse; }
+            #monitor-casing {
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                padding: 5px;
+            }
+            
+            #screen-surface {
+                border-radius: 0;
+                border: none;
+            }
+
+            #terminal-layout {
+                flex-direction: column;
+            }
+
+            #main-console {
+                flex: 1; 
+                border-right: none;
+                border-bottom: 1px solid var(--term-dim);
+                padding: 10px;
+            }
+
+            #side-panel {
+                flex: none;
+                height: 150px;
+                border-left: none;
+                padding: 10px;
+                overflow-y: auto;
+                font-size: 0.9rem;
+            }
+
+            #hacker-modal {
+                width: 96%;
+                height: 50%;
+                left: 2%;
+                bottom: 10px;
+            }
+            
+            #hacker-modal.minimized {
+                width: 180px;
+                right: 5px;
+                left: auto;
+                bottom: 5px;
+            }
+
+            #bomb-timer {
+                font-size: 1.5rem;
+                padding: 2px 8px;
+                top: 5px;
+                right: 5px;
+            }
+
+            #power-btn {
+                top: 5px;
+                right: 5px;
+                padding: 2px 5px;
+                font-size: 0.8rem;
+            }
+            
+            input[type="text"] {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -409,6 +485,18 @@
 </div>
 
 <script>
+    // --- VARIABLES GLOBALES DOM ---
+    const outputDiv = document.getElementById('output');
+    const inputField = document.getElementById('command-input');
+    const promptSpan = document.querySelector('.prompt');
+    const chatModal = document.getElementById('hacker-modal');
+    const chatHistory = document.getElementById('chat-history');
+    const chatChoices = document.getElementById('chat-choices');
+    const textInputContainer = document.getElementById('text-input-container');
+    const chatInput = document.getElementById('chat-input');
+    const bombTimerDiv = document.getElementById('bomb-timer');
+    const chatHeader = document.getElementById('chat-header');
+
     // --- LORE & DATA ---
     const FILES = {
         level0: {
@@ -426,28 +514,22 @@
         },
         level3: {
             "spectre_audio.wav": "[ANALYSE REQUISE]\nUtilisez 'ANALYSER spectre_audio.wav' pour extraire les coordonnées.",
-            // Copie locale pour pouvoir lire l'indice même après le decrypt
-            "historique_ops.txt": "HISTORIQUE OPÉRATIONNEL\n-----------------------\n1960: MERCURE\n1975: PROJET 74 (Blindage Cinétique). Symbole Chimique: W.\n1982: RIDEAU DE FER\n[DATE CORROMPUE]: OP-DN (Of The Dark Night - Voir Archives Discord)"
+            "historique_ops.txt": "HISTORIQUE OPÉRATIONNEL (COPIE LOCALE)\n-----------------------\n1960: MERCURE\n1975: PROJET 74 (Blindage Cinétique). Symbole Chimique: W.\n1982: RIDEAU DE FER\n[DATE CORROMPUE]: OP-DN (Of The Dark Night - Voir Archives Discord)"
         },
-        // --- NIVEAU 4: GÉOLOCALISATION & CIBLAGE ---
         level4: {
             "coordonnees_brutes.txt": "RÉSULTAT ANALYSE AUDIO:\nLAT: 54.255 N\nLONG: 58.103 E\n\nNOTE ANALYSTE:\nAttention, les bases de données civiles (type Google Maps) indiquent souvent le district administratif (Inzerskiy/Beloretsky).\n\nOBJECTIF: Identifiez le nom du SOMMET MONTAGNEUX (Plus haut pic de l'Oural Sud) situé exactement à ces coordonnées. Il abrite le complexe.\n\nCOMMANDE: 'CIBLER [NOM_DU_LIEU]'",
             "note_renseignement.txt": "La cible est un 'Mont' célèbre, souvent cité dans les théories du complot sur les bunkers russes."
         },
-        // --- NIVEAU 5: IDENTIFICATION ENNEMI ---
         level5: {
             "PROFIL_X.txt": "CIBLE: COMPLEXE YAMANTAU\nSTATUT: ACTIF\nCOMMANDANT: INCONNU\n\nINDICE CODE: 'Mon nom est une roche volcanique noire, tranchante comme du verre.'\n\nCOMMANDE: 'IDENTIFIER [NOM_DE_CODE]'"
         },
-        // --- NIVEAU 6: LA BOMBE ---
         level6: {
             "manuel_desamorcage.pdf": "MANUEL K-79\n\n1. TAPEZ 'STATUS' POUR VOIR LE VOLTAGE.\n\nVOLTAGE > 900 V -> COUPEZ LE VERT EN PREMIER.\nVOLTAGE < 900 V ->\n   - SI SERIAL PAIR : COUPEZ ROUGE EN PREMIER.\n   - SI SERIAL IMPAIR : COUPEZ BLEU EN PREMIER."
         },
-        // --- NIVEAU 7: LA TRAQUE ---
         level7: {
             "LOGS_ACTIVATION.txt": "JOURNAL SYSTÈME [PROTÉGÉ]\n----------------------\nDATE : AUJOURD'HUI\nHEURE : -10 MIN\n\nACTION : ACTIVATION DISTANTE BOMBE K-79\nPAQUET REÇU VIA : CANAL SÉCURISÉ #882\n\n[COMMANDE REQUISE]: TAPEZ 'TRACER [IP_SOURCE]' POUR IDENTIFIER L'ÉMETTEUR.\nNOTE: L'IP est masquée mais commence par 10.24...",
             "TRACE_RESEAU.log": "CONNEXIONS ACTIVES:\n10.24.88.99 [PROXY_ADMIN]\n192.168.1.1 [LOCALHOST]\n\nANALYSTE: Utilisez l'IP du Proxy Admin pour remonter la piste."
         },
-        // --- NIVEAU 8: FIN ---
         level8: {
             "FIN.txt": "CONNEXION PERDUE."
         }
@@ -482,7 +564,6 @@
     ];
 
     // --- ARBRE DE DIALOGUE RPG ---
-    
     const DIALOGUE_TREE = {
         'intro': {
             msg: "Connexion établie... Ici 'L'Homme de Glace'. Je te reçois. Tu es le nouveau que le QG a envoyé ?",
@@ -529,171 +610,48 @@
                 { txt: "Bien reçu. Terminé.", next: 'END_CONVERSATION' }
             ]
         },
-
-        // --- STORY BEATS - LEVEL 1 (Lemoine) ---
-        'story_after_lvl1': {
-            msg: "Tu es dedans. Lemoine était négligent. J'ai dû nettoyer ses logs hier soir. Il posait trop de questions sur le 'Projet Matriochka'.",
-            choices: [
-                { txt: "Vous l'avez connu ?", next: 'story_lvl1_known' },
-                { txt: "C'est quoi ce projet ?", next: 'story_lvl1_project' }
-            ]
-        },
-        'story_lvl1_known': {
-            msg: "On a travaillé ensemble. Avant qu'il ne devienne paranoïaque. Ou lucide. Je ne sais plus. Parfois la frontière est mince.",
-            choices: [
-                { txt: "Il est vivant ?", next: 'story_lvl1_alive' },
-                { txt: "Il a trahi ?", next: 'story_lvl1_traitor' }
-            ]
-        },
-        'story_lvl1_project': {
-            msg: "Une vieille histoire. Des armes qu'on aurait dû laisser enterrées. Lemoine a trouvé quelque chose qu'il n'aurait pas dû voir.",
-            choices: [
-                { txt: "Et vous ? Vous savez ?", next: 'story_lvl1_knows' },
-                { txt: "Je dois savoir aussi.", next: 'story_lvl1_curious' }
-            ]
-        },
+        // --- STORY BEATS ---
+        'story_after_lvl1': { msg: "Tu es dedans. Lemoine était négligent. J'ai dû nettoyer ses logs hier soir. Il posait trop de questions sur le 'Projet Matriochka'.", choices: [{ txt: "Vous l'avez connu ?", next: 'story_lvl1_known' }, { txt: "C'est quoi ce projet ?", next: 'story_lvl1_project' }] },
+        'story_lvl1_known': { msg: "On a travaillé ensemble. Avant qu'il ne devienne paranoïaque. Ou lucide. Je ne sais plus. Parfois la frontière est mince.", choices: [{ txt: "Il est vivant ?", next: 'story_lvl1_alive' }, { txt: "Il a trahi ?", next: 'story_lvl1_traitor' }] },
+        'story_lvl1_project': { msg: "Une vieille histoire. Des armes qu'on aurait dû laisser enterrées. Lemoine a trouvé quelque chose qu'il n'aurait pas dû voir.", choices: [{ txt: "Et vous ? Vous savez ?", next: 'story_lvl1_knows' }, { txt: "Je dois savoir aussi.", next: 'story_lvl1_curious' }] },
         'story_lvl1_alive': { msg: "Qui sait ? Dans ce métier, disparaître est parfois la seule façon de rester en vie.", choices: [{txt:"Je vois...", next: 'END_CONVERSATION'}] },
         'story_lvl1_traitor': { msg: "Trahir qui ? L'État ? Ou sa propre conscience ? Tout est une question de point de vue.", choices: [{txt:"Philosophe...", next: 'END_CONVERSATION'}] },
         'story_lvl1_knows': { msg: "J'en sais assez pour ne pas dormir la nuit. Et toi, tu vas bientôt me rejoindre dans l'insomnie.", choices: [{txt:"Rassurant.", next: 'END_CONVERSATION'}] },
         'story_lvl1_curious': { msg: "La curiosité tue plus sûrement que les balles. Contente-toi d'obéir pour l'instant.", choices: [{txt:"Bien reçu.", next: 'END_CONVERSATION'}] },
 
-
-        // --- STORY BEATS - LEVEL 2 (Propre vs Corrompu) ---
-        'story_after_lvl2': {
-            msg: "Ce dossier crypté... Goronov n'était qu'un pion. Des noms ici pourraient faire tomber la moitié de l'État-Major.",
-            choices: [
-                { txt: "Pourquoi vous m'aidez alors ?", next: 'story_lvl2_why' },
-                { txt: "Je dois rapporter ça au QG.", next: 'story_lvl2_report' }
-            ]
-        },
-        // Branche 1: "Pourquoi moi"
-        'story_lvl2_why': {
-            msg: "Parce que j'ai besoin de quelqu'un de 'propre'. Quelqu'un qui n'est pas encore corrompu par le système.",
-            choices: [
-                { txt: "Merci de me faire confiance.", next: 'story_lvl2_thanks' },
-                { txt: "Qui vous dit que je suis propre ?", next: 'story_lvl2_clean_doubt' }
-            ]
-        },
-        'story_lvl2_thanks': {
-            msg: "Ne me remercie pas. La 'propreté' est une cible peinte sur ton dos. Lemoine m'a remercié aussi, au début.",
-            choices: [
-                { txt: "Je ne finirai pas comme lui.", next: 'story_lvl2_fate' },
-                { txt: "Vous l'avez utilisé ?", next: 'story_lvl2_used' }
-            ]
-        },
-        'story_lvl2_clean_doubt': {
-            msg: "J'ai scanné ton historique, tes communications, tes déplacements depuis 2018. Tu es une anomalie statistique : un soldat honnête.",
-            choices: [
-                { txt: "L'honnêteté ne paie pas ici.", next: 'story_lvl2_honesty' },
-                { txt: "Vous m'espionnez ?", next: 'story_lvl2_spy' }
-            ]
-        },
-        // Branche 2: "Rapport QG"
-        'story_lvl2_report': {
-            msg: "Le QG ? Ils savent déjà. C'est eux qui ont classifié ces dossiers. Tu veux te jeter dans la gueule du loup ?",
-            choices: [
-                { txt: "Alors qui croire ?", next: 'story_lvl2_trust' },
-                { txt: "Je fais mon devoir.", next: 'story_lvl2_duty' }
-            ]
-        },
-        // Suite et fin branche 1
-        'story_lvl2_fate': { msg: "C'est ce qu'on verra. Le pouvoir a tendance à noircir les âmes les plus pures dès qu'on leur donne un accès root.", choices: [{txt:"Testez-moi.", next: 'story_lvl2_test'}] },
-        'story_lvl2_used': { msg: "Dans cette guerre de l'ombre, tout le monde utilise tout le monde. Je suis juste le seul à te l'avouer en face.", choices: [{txt:"Au moins c'est clair.", next: 'story_lvl2_clear'}] },
-        'story_lvl2_honesty': { msg: "Elle paie en sommeil. Tu dors mieux que tes supérieurs, crois-moi.", choices: [{txt:"Pas faux.", next: 'END_CONVERSATION'}] },
-        'story_lvl2_spy': { msg: "Je 'veille'. C'est mon travail. Si je ne t'avais pas espionné, tu serais déjà grillé par la sécurité.", choices: [{txt:"Super...", next: 'END_CONVERSATION'}] },
-        
-        'story_lvl2_test': { msg: "Le test est en cours. Chaque commande que tu tapes définit ton camp. Ne te trompe pas d'ennemi.", choices: [{txt:"Qui est le vrai ennemi ?", next: 'END_CONVERSATION'}] },
-        'story_lvl2_clear': { msg: "La clarté est une arme rare. Garde-la.", choices: [{txt:"Je le ferai.", next: 'END_CONVERSATION'}] },
-
-        // Suite et fin branche 2
+        'story_after_lvl2': { msg: "Ce dossier crypté... Goronov n'était qu'un pion. Des noms ici pourraient faire tomber la moitié de l'État-Major.", choices: [{ txt: "Pourquoi vous m'aidez alors ?", next: 'story_lvl2_why' }, { txt: "Je dois rapporter ça au QG.", next: 'story_lvl2_report' }] },
+        'story_lvl2_why': { msg: "Parce que j'ai besoin de quelqu'un de 'propre'. Quelqu'un qui n'est pas encore corrompu par le système.", choices: [{ txt: "Merci de me faire confiance.", next: 'story_lvl2_thanks' }, { txt: "Qui vous dit que je suis propre ?", next: 'story_lvl2_clean_doubt' }] },
+        'story_lvl2_report': { msg: "Le QG ? Ils savent déjà. C'est eux qui ont classifié ces dossiers. Tu veux te jeter dans la gueule du loup ?", choices: [{ txt: "Alors qui croire ?", next: 'story_lvl2_trust' }, { txt: "Je fais mon devoir.", next: 'story_lvl2_duty' }] },
+        'story_lvl2_thanks': { msg: "Ne me remercie pas. La 'propreté' est une cible peinte sur ton dos. Lemoine m'a remercié aussi, au début.", choices: [{ txt: "Je ne finirai pas comme lui.", next: 'story_lvl2_fate' }, { txt: "Vous l'avez utilisé ?", next: 'story_lvl2_used' }] },
+        'story_lvl2_clean_doubt': { msg: "J'ai scanné ton historique, tes communications, tes déplacements depuis 2018. Tu es une anomalie statistique : un soldat honnête.", choices: [{ txt: "L'honnêteté ne paie pas ici.", next: 'story_lvl2_honesty' }, { txt: "Vous m'espionnez ?", next: 'story_lvl2_spy' }] },
         'story_lvl2_trust': { msg: "Personne. Même pas moi. Vérifie tout. Doute de tout. C'est la seule règle.", choices: [{txt:"C'est noté.", next: 'END_CONVERSATION'}] },
         'story_lvl2_duty': { msg: "Ton devoir est de survivre. Pas de servir de fusible à des bureaucrates.", choices: [{txt:"Je m'en souviendrai.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_fate': { msg: "C'est ce qu'on verra. Le pouvoir a tendance à noircir les âmes les plus pures dès qu'on leur donne un accès root.", choices: [{txt:"Testez-moi.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_used': { msg: "Dans cette guerre de l'ombre, tout le monde utilise tout le monde. Je suis juste le seul à te l'avouer en face.", choices: [{txt:"C'est clair.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_honesty': { msg: "Elle paie en sommeil. Tu dors mieux que tes supérieurs, crois-moi.", choices: [{txt:"Pas faux.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_spy': { msg: "Je 'veille'. C'est mon travail. Si je ne t'avais pas espionné, tu serais déjà grillé par la sécurité.", choices: [{txt:"Super...", next: 'END_CONVERSATION'}] },
 
-
-        // --- STORY BEATS - LEVEL 3 (Projet 74) ---
-        'story_after_lvl3': {
-            msg: "Date confirmée. J'extrais les coordonnées cachées dans l'audio... Attends... 54.255 Nord, 58.103 Est. Ça ne me dit rien de bon.",
-            choices: [
-                { txt: "C'est où ?", next: 'story_lvl3_where' },
-                { txt: "Je lance la recherche.", next: 'story_lvl3_search' }
-            ]
-        },
+        'story_after_lvl3': { msg: "Date confirmée. J'extrais les coordonnées cachées dans l'audio... Attends... 54.255 Nord, 58.103 Est. Ça ne me dit rien de bon.", choices: [{ txt: "C'est où ?", next: 'story_lvl3_where' }, { txt: "Je lance la recherche.", next: 'story_lvl3_search' }] },
         'story_lvl3_where': { msg: "C'est ce que tu dois trouver. Utilise tes outils externes. Google Maps est ton ami. Cherche ce qu'il y a à ces coordonnées.", choices: [{txt:"Je m'en occupe.", next: 'END_CONVERSATION'}] },
         'story_lvl3_search': { msg: "Fais vite. Si ces coordonnées sont ce que je pense, on est assis sur un volcan.", choices: [{txt:"Je cherche.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 4 (CIBLAGE) ---
-        'story_after_lvl4': {
-            msg: "Yamantau... Je le savais. La montagne maudite. C'est là qu'ils se cachent. Le dossier 'PROFIL_X' est accessible.",
-            choices: [
-                { txt: "Qui se cache ?", next: 'story_lvl4_who' },
-                { txt: "Je consulte le dossier.", next: 'story_lvl4_lock' }
-            ]
-        },
+        'story_after_lvl4': { msg: "Yamantau... Je le savais. La montagne maudite. C'est là qu'ils se cachent. Le dossier 'PROFIL_X' est accessible.", choices: [{ txt: "Qui se cache ?", next: 'story_lvl4_who' }, { txt: "Je consulte le dossier.", next: 'story_lvl4_lock' }] },
         'story_lvl4_who': { msg: "L'ennemi a un nom de code. Trouve-le dans le dossier et identifie-le. On doit savoir qui on affronte.", choices: [{txt:"Je regarde.", next: 'END_CONVERSATION'}] },
         'story_lvl4_lock': { msg: "Cherche l'indice sur la roche noire. C'est la clé de son identité.", choices: [{txt:"Reçu.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 5 (OBSIDIAN) ---
-        'story_after_lvl5': {
-            msg: "OBSIDIAN ! Je pensais que c'était une légende... ATTENTION ! DÉTECTION DE LANCEMENT !",
-            choices: [
-                { txt: "De quoi ?!", next: 'story_lvl5_bomb' }
-            ]
-        },
+        'story_after_lvl5': { msg: "OBSIDIAN ! Je pensais que c'était une légende... ATTENTION ! DÉTECTION DE LANCEMENT !", choices: [{ txt: "De quoi ?!", next: 'story_lvl5_bomb' }] },
         'story_lvl5_bomb': { msg: "Il sait qu'on l'a trouvé ! Il active la bombe K-79 à distance ! Désamorce-la immédiatement ou tout est fini !", choices: [{txt:"Merde !", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 6 (APRÈS BOMBE - LA TRAQUE) ---
-        'story_after_lvl6': {
-            msg: "C'était moins une. La bombe est inerte. Joli travail. Maintenant, finis le boulot. Trace le signal d'activation.",
-            choices: [
-                { txt: "Pourquoi faire ?", next: 'story_lvl6_why' },
-                { txt: "Je lance le traçage.", next: 'story_lvl6_trace' }
-            ]
-        },
+        'story_after_lvl6': { msg: "C'était moins une. La bombe est inerte. Joli travail. Maintenant, finis le boulot. Trace le signal d'activation.", choices: [{ txt: "Pourquoi faire ?", next: 'story_lvl6_why' }, { txt: "Je lance le traçage.", next: 'story_lvl6_trace' }] },
         'story_lvl6_why': { msg: "Pour trouver l'IP source. Obsidian ne travaille jamais seul. Regarde les LOGS et utilise la commande TRACER.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
         'story_lvl6_trace': { msg: "Trouve l'IP source dans le fichier 'LOGS_ACTIVATION.txt' et remonte la piste. On doit savoir d'où ça vient.", choices: [{txt:"Je m'y mets.", next: 'END_CONVERSATION'}] },
 
-        // --- STORY BEATS - LEVEL 7 (LA RÉVÉLATION) ---
-        'revelation_start': {
-            msg: "Je vois que tu as trouvé l'IP. Et tu as compris à qui elle appartient.",
-            choices: [
-                { txt: "C'est votre IP ! C'est vous Obsidian ?", next: 'rev_truth' },
-                { txt: "Pourquoi vous avez fait ça ?", next: 'rev_why' }
-            ]
-        },
-        'rev_truth': {
-            msg: "Obsidian n'est pas une personne. C'est un protocole de test. Et je suis son architecte.",
-            choices: [
-                { txt: "Tout ça n'était qu'un test ?", next: 'rev_test' },
-                { txt: "Vous avez failli tous nous tuer !", next: 'rev_risk' }
-            ]
-        },
-        'rev_why': {
-            msg: "Pour voir si tu étais digne. La Force Opérationnelle est infiltrée. J'avais besoin de purifier les rangs.",
-            choices: [
-                { txt: "En posant une bombe ?!", next: 'rev_risk' },
-                { txt: "Et Lemoine ?", next: 'rev_lemoine' }
-            ]
-        },
-        'rev_risk': {
-            msg: "La bombe était réelle. Si tu avais échoué, tu serais mort. Et le QG aurait renforcé la sécurité. Gagnant-gagnant.",
-            choices: [
-                { txt: "Vous êtes un monstre.", next: 'rev_monster' },
-                { txt: "J'ai réussi.", next: 'rev_success' }
-            ]
-        },
-        'rev_lemoine': {
-            msg: "Lemoine a échoué au niveau 2. Il n'avait pas l'instinct. Tu es allé plus loin que lui.",
-            choices: [
-                { txt: "Qu'est-ce qui se passe maintenant ?", next: 'rev_end' }
-            ]
-        },
-        'rev_test': {
-            msg: "Un test grandeur nature. La peur est le seul vrai moteur de compétence.",
-            choices: [
-                { txt: "Je vais vous dénoncer.", next: 'rev_threat' },
-                { txt: "Je suis prêt pour la suite.", next: 'rev_join' }
-            ]
-        },
+        'revelation_start': { msg: "Je vois que tu as trouvé l'IP. Et tu as compris à qui elle appartient.", choices: [{ txt: "C'est votre IP ! C'est vous Obsidian ?", next: 'rev_truth' }, { txt: "Pourquoi vous avez fait ça ?", next: 'rev_why' }] },
+        'rev_truth': { msg: "Obsidian n'est pas une personne. C'est un protocole de test. Et je suis son architecte.", choices: [{ txt: "Tout ça n'était qu'un test ?", next: 'rev_test' }, { txt: "Vous avez failli tous nous tuer !", next: 'rev_risk' }] },
+        'rev_why': { msg: "Pour voir si tu étais digne. La Force Opérationnelle est infiltrée. J'avais besoin de purifier les rangs.", choices: [{ txt: "En posant une bombe ?!", next: 'rev_risk' }, { txt: "Et Lemoine ?", next: 'rev_lemoine' }] },
+        'rev_risk': { msg: "La bombe était réelle. Si tu avais échoué, tu serais mort. Et le QG aurait renforcé la sécurité. Gagnant-gagnant.", choices: [{ txt: "Vous êtes un monstre.", next: 'rev_monster' }, { txt: "J'ai réussi.", next: 'rev_success' }] },
+        'rev_lemoine': { msg: "Lemoine a échoué au niveau 2. Il n'avait pas l'instinct. Tu es allé plus loin que lui.", choices: [{ txt: "Qu'est-ce qui se passe maintenant ?", next: 'rev_end' }] },
+        'rev_test': { msg: "Un test grandeur nature. La peur est le seul vrai moteur de compétence.", choices: [{ txt: "Je vais vous dénoncer.", next: 'rev_threat' }, { txt: "Je suis prêt pour la suite.", next: 'rev_join' }] },
         'rev_monster': { msg: "Je suis nécessaire. Le monde est froid, soldat. Il faut des hommes de glace pour le traverser.", choices: [{txt:"...", next: 'rev_final'}] },
         'rev_success': { msg: "Oui. Tu as réussi. Tu fais partie de l'élite maintenant. Mon élite.", choices: [{txt:"Je ne travaille pas pour vous.", next: 'rev_final'}] },
         'rev_threat': { msg: "Dénoncer qui ? Je suis le système. Je suis partout. Tu viens juste de prouver ta valeur.", choices: [{txt:"...", next: 'rev_final'}] },
@@ -701,12 +659,11 @@
         'rev_end': { msg: "Maintenant ? Tu attends mes ordres. Obsidian est en veille. Mais je te surveille.", choices: [{txt:"...", next: 'rev_final'}] },
         'rev_final': { msg: "Fin de la simulation. Déconnexion.", choices: [] },
 
-
         // --- INDICES GRADUELS ---
         'hint_lvl0_1': { msg: "Tu bloques ? Lis les fichiers.", choices: [] },
         'hint_lvl0_2': { msg: "GHOST. 404. Le format est [NOM]-[ID].", choices: [] },
         'hint_lvl0_3': { msg: "Tape 'LOGIN GHOST-404'.", choices: [] },
-
+        
         'hint_lvl1_1': { msg: "Tu es admin mais sans droits. Il faut une commande d'élévation.", choices: [] },
         'hint_lvl1_2': { msg: "Cherche 'SUDO' dans la note.", choices: [] },
         'hint_lvl1_3': { msg: "Tape 'SUDO DECRYPT'.", choices: [] },
@@ -748,31 +705,28 @@
         failCount: 0 
     };
 
-    // --- MOTEUR ---
-    const outputDiv = document.getElementById('output');
-    const inputField = document.getElementById('command-input');
-    const promptSpan = document.querySelector('.prompt');
-    const chatModal = document.getElementById('hacker-modal');
-    const chatHistory = document.getElementById('chat-history');
-    const chatChoices = document.getElementById('chat-choices');
-    const textInputContainer = document.getElementById('text-input-container');
-    const chatInput = document.getElementById('chat-input');
-    const bombTimerDiv = document.getElementById('bomb-timer');
-    const chatHeader = document.getElementById('chat-header');
-
     // --- DRAG & DROP ---
     let isDragging = false;
     let currentX, currentY, initialX, initialY;
     let xOffset = 0, yOffset = 0;
 
+    // Mouse events
     chatHeader.addEventListener("mousedown", dragStart);
     document.addEventListener("mouseup", dragEnd);
     document.addEventListener("mousemove", drag);
 
+    // Touch events
+    chatHeader.addEventListener("touchstart", dragStart, {passive: false});
+    document.addEventListener("touchend", dragEnd);
+    document.addEventListener("touchmove", drag, {passive: false});
+
+    function getClientX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+    function getClientY(e) { return e.touches ? e.touches[0].clientY : e.clientY; }
+
     function dragStart(e) {
         if(e.target.closest('.chat-controls')) return;
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
+        initialX = getClientX(e) - xOffset;
+        initialY = getClientY(e) - yOffset;
         if (e.target === chatHeader || e.target.parentNode === chatHeader) {
             isDragging = true;
         }
@@ -787,8 +741,8 @@
     function drag(e) {
         if (isDragging) {
             e.preventDefault();
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
+            currentX = getClientX(e) - initialX;
+            currentY = getClientY(e) - initialY;
             xOffset = currentX;
             yOffset = currentY;
             setTranslate(currentX, currentY, chatModal);
@@ -986,7 +940,6 @@
         
         const randomMsg = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
         
-        // Pas de message de succès auto pour les niveaux finaux qui ont des dialogues scriptés
         if(GAME_STATE.level < 7) {
             setTimeout(() => addToChat("ICEMAN", randomMsg), 500);
         }
@@ -1192,25 +1145,27 @@
         addToChat("ICEMAN", "Je dois m'assurer que tu es un agent actif. Quel jour a eu lieu l'Opération 'Of The Dark Night' ? (Format: JJ/MM/AAAA)");
     }
 
-    chatInput.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter' && chatInput.value.trim() !== "") {
-            const val = chatInput.value.trim();
-            addToChat("PLAYER", val);
-            chatInput.value = "";
+    if (chatInput) {
+        chatInput.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && chatInput.value.trim() !== "") {
+                const val = chatInput.value.trim();
+                addToChat("PLAYER", val);
+                chatInput.value = "";
 
-            if(val.includes("12/08/2024")) {
-                addToChat("ICEMAN", "Correct. J'envoie les coordonnées.");
-                GAME_STATE.hackerActive = false;
-                textInputContainer.style.display = "none";
-                setTimeout(() => {
-                    nextLevel();
-                }, 3000);
-            } else {
-                addToChat("ICEMAN", "Faux. Consulte tes archives Discord si tu as oublié.");
-                registerFailure();
+                if(val.includes("12/08/2024")) {
+                    addToChat("ICEMAN", "Correct. J'envoie les coordonnées.");
+                    GAME_STATE.hackerActive = false;
+                    textInputContainer.style.display = "none";
+                    setTimeout(() => {
+                        nextLevel();
+                    }, 3000);
+                } else {
+                    addToChat("ICEMAN", "Faux. Consulte tes archives Discord si tu as oublié.");
+                    registerFailure();
+                }
             }
-        }
-    });
+        });
+    }
 
     // --- BOMBE ---
     let timerInterval;
@@ -1290,13 +1245,15 @@
         nextLevel();
     }
 
-    inputField.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter') {
-            const val = inputField.value;
-            inputField.value = '';
-            processCommand(val);
-        }
-    });
+    if (inputField) {
+        inputField.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                const val = inputField.value;
+                inputField.value = '';
+                processCommand(val);
+            }
+        });
+    }
 
 </script>
 </body>
