@@ -384,10 +384,12 @@
             }
 
             #hacker-modal {
-                width: 96%;
-                height: 50%;
-                left: 2%;
-                bottom: 10px;
+                width: 90%;
+                height: 65%; /* Agrandie pour mobile */
+                left: 5%;
+                top: 10%; /* Position haute pour laisser voir le clavier si besoin */
+                bottom: auto;
+                border: 2px solid var(--term-ice); /* Bordure plus visible sur mobile */
             }
             
             #hacker-modal.minimized {
@@ -395,6 +397,7 @@
                 right: 5px;
                 left: auto;
                 bottom: 5px;
+                top: auto;
             }
 
             #bomb-timer {
@@ -439,25 +442,6 @@
                     <span class="prompt">INIT...</span>
                     <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
                 </div>
-
-                <!-- Fenêtre de Chat HOMME DE GLACE -->
-                <div id="hacker-modal">
-                    <div id="chat-header">
-                        <span>[CRYPTÉ] L'HOMME DE GLACE</span>
-                        <div class="chat-controls">
-                            <span onclick="minimizeChat()">_</span>
-                            <span onclick="toggleChat()">X</span>
-                        </div>
-                    </div>
-                    <div id="chat-history"></div>
-                    <div id="chat-input-area">
-                        <div style="display:flex; border-bottom:1px solid #003; padding-bottom:5px; display:none" id="text-input-container">
-                            <span style="color:var(--term-ice); margin-right:5px;">></span>
-                            <input type="text" id="chat-input" placeholder="..." autocomplete="off">
-                        </div>
-                        <div id="chat-choices"></div>
-                    </div>
-                </div>
             </div>
 
             <div id="side-panel">
@@ -480,11 +464,31 @@
                 </div>
             </div>
 
+            <!-- Fenêtre de Chat HOMME DE GLACE (Déplacée ici pour être au-dessus de tout) -->
+            <div id="hacker-modal">
+                <div id="chat-header">
+                    <span>[CRYPTÉ] L'HOMME DE GLACE</span>
+                    <div class="chat-controls">
+                        <span onclick="minimizeChat()">_</span>
+                        <span onclick="toggleChat()">X</span>
+                    </div>
+                </div>
+                <div id="chat-history"></div>
+                <div id="chat-input-area">
+                    <div style="display:flex; border-bottom:1px solid #003; padding-bottom:5px; display:none" id="text-input-container">
+                        <span style="color:var(--term-ice); margin-right:5px;">></span>
+                        <input type="text" id="chat-input" placeholder="..." autocomplete="off">
+                    </div>
+                    <div id="chat-choices"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
 <script>
+    // ... existing script content ...
     // --- VARIABLES GLOBALES DOM ---
     const outputDiv = document.getElementById('output');
     const inputField = document.getElementById('command-input');
@@ -496,6 +500,8 @@
     const chatInput = document.getElementById('chat-input');
     const bombTimerDiv = document.getElementById('bomb-timer');
     const chatHeader = document.getElementById('chat-header');
+
+    // ... (Le reste du script reste identique) ...
 
     // --- LORE & DATA ---
     const FILES = {
@@ -691,18 +697,6 @@
         'hint_lvl7_1': { msg: "Regarde le fichier TRACE_RESEAU.log pour trouver l'IP.", choices: [] },
         'hint_lvl7_2': { msg: "L'IP est celle du Proxy Admin : 10.24.88.99.", choices: [] },
         'hint_lvl7_3': { msg: "Tape 'TRACER 10.24.88.99'.", choices: [] }
-    };
-
-    const GAME_STATE = {
-        level: 0,
-        bombTime: 90, 
-        bombActive: false,
-        bombSerial: Math.floor(Math.random() * 1000) + 1000, 
-        bombVoltage: Math.floor(Math.random() * 500) + 700, 
-        hackerActive: false, 
-        chatOpen: false,     
-        wiresCut: { red: false, blue: false, green: false },
-        failCount: 0 
     };
 
     // --- DRAG & DROP ---
