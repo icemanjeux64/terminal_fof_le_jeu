@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORCE OPÉRATIONNELLE - PROTOCOLE MATRIOCHKA [CLASSIFIED]</title>
+    <style>
+        :root {
+            --term-green: #33ff00;
+            --term-dim: #155500;
+            --term-bg: #050505;
+            --term-red: #ff3333;
+            --term-cyan: #00ffff;
+            --term-ice: #aaddff;
+            --scanline: rgba(0, 0, 0, 0.12);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body {
+            background-color: #000;
+            color: var(--term-green);
+            font-family: 'VT323', monospace;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        /* --- BOOT SCREEN --- */
+        #boot-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #boot-log {
+            width: 80%;
+            height: 70%;
+            overflow: hidden;
+            font-size: 1.2rem;
+            color: #444; 
+            text-align: left;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            display: none;
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+        }
+
+        .highlight-name {
+            color: #666;
+            font-weight: bold;
+            text-shadow: none;
+        }
+
+        #launch-btn {
+            background: transparent;
+            border: 2px solid var(--term-green);
+            color: var(--term-green);
+            padding: 20px 40px;
+            font-size: 2rem;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px var(--term-dim);
+            transition: all 0.2s;
+            animation: pulse-btn 2s infinite;
+        }
+
+        #launch-btn:hover {
+            background: var(--term-green);
+            color: #000;
+            box-shadow: 0 0 30px var(--term-green);
+        }
+
+        @keyframes pulse-btn { 0% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 10px var(--term-green); } 100% { opacity: 0.8; } }
+
+        /* --- MAIN INTERFACE --- */
+        #monitor-casing {
+            width: 95%;
+            height: 95%;
+            background: #111;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 0 5px #222, 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+
+        #screen-surface {
+            flex-grow: 1;
+            background-color: var(--term-bg);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--scanline) 50%, transparent 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .glow { text-shadow: 0 0 2px var(--term-green); }
+        .red-glow { text-shadow: 0 0 2px var(--term-red); color: var(--term-red); }
+        .cyan-glow { text-shadow: 0 0 2px var(--term-cyan); color: var(--term-cyan); }
+
+        #terminal-layout {
+            display: flex;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        #main-console {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 1px solid var(--term-dim);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #side-panel {
+            flex: 1;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            font-size: 1.1rem;
+            border-left: 1px solid #000;
+        }
+
+        #output {
+            flex-grow: 1;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            padding-bottom: 20px;
+            font-size: 1.2rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--term-dim) transparent;
+        }
+        
+        .input-line {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid var(--term-dim);
+            padding-top: 10px;
+            margin-top: 10px;
+            background: var(--term-bg);
+        }
+
+        .prompt {
+            color: var(--term-green);
+            margin-right: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            color: var(--term-green);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            flex-grow: 1;
+            outline: none;
+        }
+
+        /* --- STYLES DU CHAT (L'HOMME DE GLACE) --- */
+        #hacker-modal {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 450px; 
+            height: 550px;
+            background: rgba(0, 10, 20, 0.95);
+            border: 1px solid var(--term-ice);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
+            display: none;
+            z-index: 200;
+            flex-direction: column;
+        }
+        
+        #hacker-modal.minimized {
+            height: 35px;
+            width: 250px;
+            overflow: hidden;
+            bottom: 0;
+            right: 20px;
+            border-bottom: none;
+        }
+
+        #chat-header {
+            background: var(--term-ice);
+            color: #000;
+            padding: 5px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+            letter-spacing: 1px;
+        }
+        #chat-header:active { cursor: grabbing; }
+
+        .chat-controls span { margin-left: 10px; cursor: pointer; padding: 0 5px; }
+        .chat-controls span:hover { background: #fff; color: var(--term-ice); }
+
+        #chat-history {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--term-ice) #000;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 8px 10px;
+            border-radius: 2px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            font-size: 1rem;
+        }
+
+        .msg.iceman {
+            align-self: flex-start;
+            border-left: 3px solid var(--term-ice);
+            color: var(--term-ice);
+            background: rgba(0, 50, 100, 0.3);
+        }
+
+        .msg.player {
+            align-self: flex-end;
+            border-right: 3px solid var(--term-green);
+            color: #aaffaa;
+            background: rgba(0, 50, 0, 0.3);
+            text-align: right;
+        }
+
+        .msg-meta { font-size: 0.7rem; opacity: 0.6; margin-bottom: 3px; display: block; font-weight: bold; }
+
+        #chat-input-area {
+            border-top: 1px solid var(--term-ice);
+            padding: 10px;
+            display: flex;
+            background: #000;
+            flex-direction: column;
+        }
+
+        #chat-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--term-ice);
+            font-family: inherit;
+            outline: none;
+            font-size: 1.1rem;
+        }
+
+        #chat-choices { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+
+        .choice-btn {
+            background: rgba(0, 20, 40, 0.5);
+            border: 1px solid var(--term-ice);
+            color: var(--term-ice);
+            padding: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .choice-btn:hover { background: var(--term-ice); color: #000; }
+
+        /* Timer Bomb */
+        #bomb-timer {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2.5rem;
+            color: var(--term-red);
+            border: 2px solid var(--term-red);
+            padding: 5px 15px;
+            display: none;
+            background: rgba(0,0,0,0.8);
+            z-index: 150;
+        }
+
+        #power-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: #300;
+            color: #f00;
+            border: 1px solid #600;
+            padding: 5px 10px;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            z-index: 200;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        #power-btn:hover { background: #f00; color: #000; }
+
+        .error { color: var(--term-red); }
+        .success { color: #ccffcc; font-weight: bold; }
+        .info { color: #88ff88; }
+        .dim { color: var(--term-dim); }
+        
+        @media (max-width: 800px) {
+            #hacker-modal { width: 90%; height: 40%; bottom: 5%; right: 5%; }
+            #terminal-layout { flex-direction: column-reverse; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ÉCRAN DE DÉMARRAGE -->
+<div id="boot-screen">
+    <button id="launch-btn" onclick="startBootSequence()">LANCER LE PROGRAMME</button>
+    <div id="boot-log"></div>
+</div>
+
+<div id="monitor-casing">
+    <button id="power-btn" onclick="resetGame()">SYSTEM REBOOT</button>
+    
+    <div id="screen-surface">
+        <div class="scanlines"></div>
+        <div id="terminal-layout" class="glow">
+            
+            <div id="main-console">
+                <div id="bomb-timer">00:00</div>
+                <div id="output"></div>
+                <div class="input-line">
+                    <span class="prompt">INIT...</span>
+                    <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
+                </div>
+
+                <!-- Fenêtre de Chat HOMME DE GLACE -->
+                <div id="hacker-modal">
+                    <div id="chat-header">
+                        <span>[CRYPTÉ] L'HOMME DE GLACE</span>
+                        <div class="chat-controls">
+                            <span onclick="minimizeChat()">_</span>
+                            <span onclick="toggleChat()">X</span>
+                        </div>
+                    </div>
+                    <div id="chat-history"></div>
+                    <div id="chat-input-area">
+                        <div style="display:flex; border-bottom:1px solid #003; padding-bottom:5px; display:none" id="text-input-container">
+                            <span style="color:var(--term-ice); margin-right:5px;">></span>
+                            <input type="text" id="chat-input" placeholder="..." autocomplete="off">
+                        </div>
+                        <div id="chat-choices"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="side-panel">
+                <div class="panel-block">
+                    <div class="panel-title" style="background:var(--term-green)">ÉTAT SYSTÈME</div>
+                    <div class="panel-content">
+                        ID: <span id="hud-user">GUEST</span><br>
+                        SEC: <span id="hud-sec">NULLE</span>
+                    </div>
+                </div>
+
+                <div class="panel-block">
+                    <div class="panel-title" style="background:var(--term-green)">OBJECTIF</div>
+                    <div class="panel-content mission-text" id="hud-mission">...</div>
+                </div>
+
+                <div class="panel-block">
+                    <div class="panel-title" style="background:var(--term-green)">AIDE-MÉMOIRE</div>
+                    <div class="panel-content cmd-list" id="hud-commands"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- LORE & DATA ---
+    const FILES = {
+        level0: {
+            "00_README.txt": "BIENVENUE SUR LE PORTAIL DE LA FORCE OPÉRATIONNELLE.\n\nSYNTAXE DE CONNEXION :\n   LOGIN [NOM_ESCOUADE]-[MATRICULE_COURT]\n\nEXEMPLE : 'LOGIN ALPHA-332'.",
+            "01_AVIS_RECHERCHE.txt": "URGENT - OFFICIEL\n------------------\nNOM      : LEMOINE\nUNITÉ    : GHOST\nMATRICULE: 74-404-112\n\nNOTE: Son mot de passe est son identifiant d'unité."
+        },
+        level1: {
+            "journal_lemoine.txt": "15 MAI - J'ai crypté les données. Le fichier 'CIBLE.ENC' contient la preuve.\nSeul un accès SUDO peut l'ouvrir.",
+            "note_securite.txt": "RAPPEL: Utilisez 'SUDO DECRYPT' pour lancer l'outil de déchiffrement.",
+            "CIBLE.ENC": "[FICHIER VERROUILLÉ - ACCÈS REFUSÉ]"
+        },
+        level2: {
+            "message_source.enc": "TEXTE: 'Wb fvtb xlm ixmx...'\nINDICE: La clé est le nom du métal principal du 'PROJET 74'.",
+            "historique_ops.txt": "HISTORIQUE OPÉRATIONNEL\n-----------------------\n1960: MERCURE\n1975: PROJET 74 (Blindage Cinétique). Symbole Chimique: W.\n1982: RIDEAU DE FER\n2024: OP-DN (Of The Dark Night - Rapport Discord)"
+        },
+        level3: {
+            "spectre_audio.wav": "[ANALYSE REQUISE]\nUtilisez 'ANALYSER spectre_audio.wav' pour extraire les coordonnées.",
+            // Copie locale pour pouvoir lire l'indice même après le decrypt
+            "historique_ops.txt": "HISTORIQUE OPÉRATIONNEL\n-----------------------\n1960: MERCURE\n1975: PROJET 74 (Blindage Cinétique). Symbole Chimique: W.\n1982: RIDEAU DE FER\n[DATE CORROMPUE]: OP-DN (Of The Dark Night - Voir Archives Discord)"
+        },
+        // --- NIVEAU 4: GÉOLOCALISATION & CIBLAGE ---
+        level4: {
+            "coordonnees_brutes.txt": "RÉSULTAT ANALYSE AUDIO:\nLAT: 54.255 N\nLONG: 58.103 E\n\nNOTE ANALYSTE:\nAttention, les bases de données civiles (type Google Maps) indiquent souvent le district administratif (Inzerskiy/Beloretsky).\n\nOBJECTIF: Identifiez le nom du SOMMET MONTAGNEUX (Plus haut pic de l'Oural Sud) situé exactement à ces coordonnées. Il abrite le complexe.\n\nCOMMANDE: 'CIBLER [NOM_DU_LIEU]'",
+            "note_renseignement.txt": "La cible est un 'Mont' célèbre, souvent cité dans les théories du complot sur les bunkers russes."
+        },
+        // --- NIVEAU 5: IDENTIFICATION ENNEMI ---
+        level5: {
+            "PROFIL_X.txt": "CIBLE: COMPLEXE YAMANTAU\nSTATUT: ACTIF\nCOMMANDANT: INCONNU\n\nINDICE CODE: 'Mon nom est une roche volcanique noire, tranchante comme du verre.'\n\nCOMMANDE: 'IDENTIFIER [NOM_DE_CODE]'"
+        },
+        // --- NIVEAU 6: LA BOMBE ---
+        level6: {
+            "manuel_desamorcage.pdf": "MANUEL K-79\n\n1. TAPEZ 'STATUS' POUR VOIR LE VOLTAGE.\n\nVOLTAGE > 900 V -> COUPEZ LE VERT EN PREMIER.\nVOLTAGE < 900 V ->\n   - SI SERIAL PAIR : COUPEZ ROUGE EN PREMIER.\n   - SI SERIAL IMPAIR : COUPEZ BLEU EN PREMIER."
+        },
+        // --- NIVEAU 7: LA TRAQUE ---
+        level7: {
+            "LOGS_ACTIVATION.txt": "JOURNAL SYSTÈME [PROTÉGÉ]\n----------------------\nDATE : AUJOURD'HUI\nHEURE : -10 MIN\n\nACTION : ACTIVATION DISTANTE BOMBE K-79\nPAQUET REÇU VIA : CANAL SÉCURISÉ #882\n\n[COMMANDE REQUISE]: TAPEZ 'TRACER [IP_SOURCE]' POUR IDENTIFIER L'ÉMETTEUR.\nNOTE: L'IP est masquée mais commence par 10.24...",
+            "TRACE_RESEAU.log": "CONNEXIONS ACTIVES:\n10.24.88.99 [PROXY_ADMIN]\n192.168.1.1 [LOCALHOST]\n\nANALYSTE: Utilisez l'IP du Proxy Admin pour remonter la piste."
+        },
+        // --- NIVEAU 8: FIN ---
+        level8: {
+            "FIN.txt": "CONNEXION PERDUE."
+        }
+    };
+
+    const SUCCESS_MESSAGES = [
+        "Accès validé. On continue.",
+        "C'est fait. J'ai effacé tes traces.",
+        "Tu apprends vite. C'est inquiétant... mais utile.",
+        "Niveau franchi. Espérons que tu ne sois pas un traître.",
+        "Données sécurisées. Je commence à t'apprécier.",
+        "On passe à la suite. Ne me déçois pas.",
+        "Barrière numérique franchie.",
+        "Joli travail. Le plus dur reste à venir.",
+        "Code accepté."
+    ];
+
+    const CLOSING_PHRASES = [
+        "Allez, coupe le canal. Au travail.",
+        "Assez parlé. Concentre-toi sur la mission.",
+        "Je disparais. Ne me fais pas regretter cet échange.",
+        "Stop. Reprends le contrôle du terminal.",
+        "Fin de transmission. Bouge-toi.",
+        "On bavarde trop. Les logs s'accumulent. Avance.",
+        "Silence radio. Terminé.",
+        "Je coupe la connexion sécurisée. À toi de jouer.",
+        "Plus un mot. Exécution.",
+        "Va t'en, concentre-toi.",
+        "Ferme cette fenêtre et agis.",
+        "Discussion close. Priorité à la mission.",
+        "On reprendra ça plus tard... si on survit."
+    ];
+
+    // --- ARBRE DE DIALOGUE RPG ---
+    
+    const DIALOGUE_TREE = {
+        'intro': {
+            msg: "Connexion établie... Ici 'L'Homme de Glace'. Je te reçois. Tu es le nouveau que le QG a envoyé ?",
+            choices: [
+                { txt: "Affirmatif. Qui êtes-vous ?", next: 'identity' },
+                { txt: "Identifiez-vous d'abord.", next: 'arrogant' }
+            ]
+        },
+        'identity': {
+            msg: "Considère-moi comme ton ange gardien... ou ton pire cauchemar si tu fais une erreur. Je surveille ce réseau.",
+            choices: [
+                { txt: "Je ne ferai pas d'erreur.", next: 'tuto_cmds' },
+                { txt: "Pourquoi vous cachez-vous ?", next: 'suspicious' }
+            ]
+        },
+        'arrogant': {
+            msg: "Garde ton égo pour le terrain. Ici, un seul faux pas et tout saute. Je suis là pour t'éviter ça.",
+            choices: [
+                { txt: "Compris. Instructions ?", next: 'tuto_cmds' },
+                { txt: "Je peux me débrouiller seul.", next: 'alone' }
+            ]
+        },
+        'suspicious': {
+            msg: "Moins tu en sais sur moi, plus tu vivras vieux. Contente-toi de suivre mes directives.",
+            choices: [
+                { txt: "Très bien. Par où commence-t-on ?", next: 'tuto_cmds' }
+            ]
+        },
+        'alone': {
+            msg: "C'est ce que disait Lemoine. Et maintenant il a disparu. Écoute-moi si tu veux survivre.",
+            choices: [
+                { txt: "Ok, je vous écoute.", next: 'tuto_cmds' }
+            ]
+        },
+        'tuto_cmds': {
+            msg: "Bien. Voici les bases du terminal Unix militaire :\n1. LS : 'List'. Pour voir ce qu'il y a.\n2. CAT : 'Concatenate'. Pour LIRE un fichier.\n3. CLEAR : Pour nettoyer ton écran.",
+            choices: [
+                { txt: "LS pour voir, CAT pour lire. Reçu.", next: 'tuto_mission' }
+            ]
+        },
+        'tuto_mission': {
+            msg: "Trouve les identifiants de Lemoine. LS pour fouiller, CAT pour lire. Je reste en veille.",
+            choices: [
+                { txt: "Bien reçu. Terminé.", next: 'END_CONVERSATION' }
+            ]
+        },
+
+        // --- STORY BEATS - LEVEL 1 (Lemoine) ---
+        'story_after_lvl1': {
+            msg: "Tu es dedans. Lemoine était négligent. J'ai dû nettoyer ses logs hier soir. Il posait trop de questions sur le 'Projet Matriochka'.",
+            choices: [
+                { txt: "Vous l'avez connu ?", next: 'story_lvl1_known' },
+                { txt: "C'est quoi ce projet ?", next: 'story_lvl1_project' }
+            ]
+        },
+        'story_lvl1_known': {
+            msg: "On a travaillé ensemble. Avant qu'il ne devienne paranoïaque. Ou lucide. Je ne sais plus. Parfois la frontière est mince.",
+            choices: [
+                { txt: "Il est vivant ?", next: 'story_lvl1_alive' },
+                { txt: "Il a trahi ?", next: 'story_lvl1_traitor' }
+            ]
+        },
+        'story_lvl1_project': {
+            msg: "Une vieille histoire. Des armes qu'on aurait dû laisser enterrées. Lemoine a trouvé quelque chose qu'il n'aurait pas dû voir.",
+            choices: [
+                { txt: "Et vous ? Vous savez ?", next: 'story_lvl1_knows' },
+                { txt: "Je dois savoir aussi.", next: 'story_lvl1_curious' }
+            ]
+        },
+        'story_lvl1_alive': { msg: "Qui sait ? Dans ce métier, disparaître est parfois la seule façon de rester en vie.", choices: [{txt:"Je vois...", next: 'END_CONVERSATION'}] },
+        'story_lvl1_traitor': { msg: "Trahir qui ? L'État ? Ou sa propre conscience ? Tout est une question de point de vue.", choices: [{txt:"Philosophe...", next: 'END_CONVERSATION'}] },
+        'story_lvl1_knows': { msg: "J'en sais assez pour ne pas dormir la nuit. Et toi, tu vas bientôt me rejoindre dans l'insomnie.", choices: [{txt:"Rassurant.", next: 'END_CONVERSATION'}] },
+        'story_lvl1_curious': { msg: "La curiosité tue plus sûrement que les balles. Contente-toi d'obéir pour l'instant.", choices: [{txt:"Bien reçu.", next: 'END_CONVERSATION'}] },
+
+
+        // --- STORY BEATS - LEVEL 2 (Propre vs Corrompu) ---
+        'story_after_lvl2': {
+            msg: "Ce dossier crypté... Goronov n'était qu'un pion. Des noms ici pourraient faire tomber la moitié de l'État-Major.",
+            choices: [
+                { txt: "Pourquoi vous m'aidez alors ?", next: 'story_lvl2_why' },
+                { txt: "Je dois rapporter ça au QG.", next: 'story_lvl2_report' }
+            ]
+        },
+        'story_lvl2_why': {
+            msg: "Parce que j'ai besoin de quelqu'un de 'propre'. Quelqu'un qui n'est pas encore corrompu par le système.",
+            choices: [
+                { txt: "Merci de me faire confiance.", next: 'story_lvl2_thanks' },
+                { txt: "Qui vous dit que je suis propre ?", next: 'story_lvl2_clean_doubt' }
+            ]
+        },
+        'story_lvl2_report': {
+            msg: "Le QG ? Ils savent déjà. C'est eux qui ont classifié ces dossiers. Tu veux te jeter dans la gueule du loup ?",
+            choices: [
+                { txt: "Alors qui croire ?", next: 'story_lvl2_trust' },
+                { txt: "Je fais mon devoir.", next: 'story_lvl2_duty' }
+            ]
+        },
+        'story_lvl2_thanks': {
+            msg: "Ne me remercie pas. La 'propreté' est une cible peinte sur ton dos. Lemoine m'a remercié aussi, au début.",
+            choices: [
+                { txt: "Je ne finirai pas comme lui.", next: 'story_lvl2_fate' },
+                { txt: "Vous l'avez utilisé ?", next: 'story_lvl2_used' }
+            ]
+        },
+        'story_lvl2_clean_doubt': {
+            msg: "J'ai scanné ton historique, tes communications, tes déplacements depuis 2018. Tu es une anomalie statistique : un soldat honnête.",
+            choices: [
+                { txt: "L'honnêteté ne paie pas ici.", next: 'story_lvl2_honesty' },
+                { txt: "Vous m'espionnez ?", next: 'story_lvl2_spy' }
+            ]
+        },
+        'story_lvl2_trust': { msg: "Personne. Même pas moi. Vérifie tout. Doute de tout. C'est la seule règle.", choices: [{txt:"C'est noté.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_duty': { msg: "Ton devoir est de survivre. Pas de servir de fusible à des bureaucrates.", choices: [{txt:"Je m'en souviendrai.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_fate': { msg: "C'est ce qu'on verra. Le pouvoir a tendance à noircir les âmes les plus pures dès qu'on leur donne un accès root.", choices: [{txt:"Testez-moi.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_used': { msg: "Dans cette guerre de l'ombre, tout le monde utilise tout le monde. Je suis juste le seul à te l'avouer en face.", choices: [{txt:"C'est clair.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_honesty': { msg: "Elle paie en sommeil. Tu dors mieux que tes supérieurs, crois-moi.", choices: [{txt:"Pas faux.", next: 'END_CONVERSATION'}] },
+        'story_lvl2_spy': { msg: "Je 'veille'. C'est mon travail. Si je ne t'avais pas espionné, tu serais déjà grillé par la sécurité.", choices: [{txt:"Super...", next: 'END_CONVERSATION'}] },
+
+        // --- STORY BEATS - LEVEL 3 (L'AUDIO ET LA SÉCURITÉ) ---
+        // Avant le quiz audio
+        'story_after_lvl3': {
+            msg: "Le message parlait d'un fichier audio. Je l'ai isolé. Analyse-le. Mais attention, le système exigera une confirmation d'identité.",
+            choices: [
+                { txt: "Quel genre de confirmation ?", next: 'story_lvl3_secu' },
+                { txt: "Je lance l'analyse.", next: 'story_lvl3_go' }
+            ]
+        },
+        'story_lvl3_secu': { msg: "Un protocole anti-intrusion. Il te posera une question sur une opération récente pour vérifier que tu es un agent actif.", choices: [{txt:"Je suis prêt.", next: 'END_CONVERSATION'}] },
+        'story_lvl3_go': { msg: "Vas-y. Mais si tu échoues au test de sécurité, on sera déconnectés.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
+
+        // --- STORY BEATS - LEVEL 4 (DATE VALIDÉE - COORDONNÉES) ---
+        // Après le quiz audio réussi
+        'story_after_lvl4': {
+            msg: "Date confirmée. Accès déverrouillé. J'ai extrait les coordonnées cachées dans le spectre audio : 54.255 Nord, 58.103 Est.",
+            choices: [
+                { txt: "Qu'est-ce qu'il y a là-bas ?", next: 'story_lvl4_what' },
+                { txt: "Je cherche sur la carte.", next: 'story_lvl4_search' }
+            ]
+        },
+        'story_lvl4_what': { msg: "C'est ce que tu dois me dire. Utilise tes outils externes (Google Maps). C'est un lieu géographique précis, pas une ville.", choices: [{txt:"Je m'en occupe.", next: 'END_CONVERSATION'}] },
+        'story_lvl4_search': { msg: "Fais vite. Si ces coordonnées sont ce que je pense, on est assis sur un volcan.", choices: [{txt:"Je cherche.", next: 'END_CONVERSATION'}] },
+
+        // --- STORY BEATS - LEVEL 5 (YAMANTAU - OBSIDIAN) ---
+        // Après avoir ciblé Yamantau
+        'story_after_lvl5': {
+            msg: "Yamantau... Je le savais. La montagne maudite. C'est là qu'ils se cachent. Le dossier 'PROFIL_X' est accessible.",
+            choices: [
+                { txt: "Qui se cache ?", next: 'story_lvl5_who' },
+                { txt: "Je consulte le dossier.", next: 'story_lvl5_read' }
+            ]
+        },
+        'story_lvl5_who': { msg: "L'ennemi a un nom de code. Trouve-le dans le dossier et identifie-le. On doit savoir qui on affronte.", choices: [{txt:"Je regarde.", next: 'END_CONVERSATION'}] },
+        'story_lvl5_read': { msg: "Cherche l'indice sur la roche noire. C'est la clé de son identité.", choices: [{txt:"Reçu.", next: 'END_CONVERSATION'}] },
+
+        // --- STORY BEATS - LEVEL 6 (OBSIDIAN - BOMBE) ---
+        // Après avoir identifié Obsidian
+        'story_after_lvl6': {
+            msg: "OBSIDIAN ! Je pensais que c'était une légende... ATTENTION ! DÉTECTION DE LANCEMENT !",
+            choices: [
+                { txt: "De quoi ?!", next: 'story_lvl6_panic' }
+            ]
+        },
+        'story_lvl6_panic': { msg: "Il sait qu'on l'a trouvé ! Il active la bombe K-79 à distance ! Désamorce-la immédiatement ou tout est fini !", choices: [{txt:"Merde !", next: 'END_CONVERSATION'}] },
+
+        // --- STORY BEATS - LEVEL 7 (APRÈS BOMBE - LA TRAQUE) ---
+        'story_after_lvl7': {
+            msg: "C'était moins une. La bombe est inerte. Joli travail. Maintenant, finis le boulot. Trace le signal d'activation.",
+            choices: [
+                { txt: "Pourquoi faire ?", next: 'story_lvl7_why' },
+                { txt: "Je lance le traçage.", next: 'story_lvl7_trace' }
+            ]
+        },
+        'story_lvl7_why': { msg: "Pour trouver l'IP source. Obsidian ne travaille jamais seul. Regarde les LOGS et utilise la commande TRACER.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
+        'story_lvl7_trace': { msg: "Trouve l'IP source dans le fichier 'LOGS_ACTIVATION.txt' et remonte la piste. On doit savoir d'où ça vient.", choices: [{txt:"Je m'y mets.", next: 'END_CONVERSATION'}] },
+
+        // --- STORY BEATS - LEVEL 8 (RÉVÉLATION) ---
+        'revelation_start': {
+            msg: "Je vois que tu as trouvé l'IP. Et tu as compris à qui elle appartient.",
+            choices: [
+                { txt: "C'est votre IP ! C'est vous Obsidian ?", next: 'rev_truth' },
+                { txt: "Pourquoi vous avez fait ça ?", next: 'rev_why' }
+            ]
+        },
+        'rev_truth': {
+            msg: "Obsidian n'est pas une personne. C'est un protocole de test. Et je suis son architecte.",
+            choices: [
+                { txt: "Tout ça n'était qu'un test ?", next: 'rev_test' },
+                { txt: "Vous avez failli tous nous tuer !", next: 'rev_risk' }
+            ]
+        },
+        'rev_why': {
+            msg: "Pour voir si tu étais digne. La Force Opérationnelle est infiltrée. J'avais besoin de purifier les rangs.",
+            choices: [
+                { txt: "En posant une bombe ?!", next: 'rev_risk' },
+                { txt: "Et Lemoine ?", next: 'rev_lemoine' }
+            ]
+        },
+        'rev_risk': {
+            msg: "La bombe était réelle. Si tu avais échoué, tu serais mort. Et le QG aurait renforcé la sécurité. Gagnant-gagnant.",
+            choices: [
+                { txt: "Vous êtes un monstre.", next: 'rev_monster' },
+                { txt: "J'ai réussi.", next: 'rev_success' }
+            ]
+        },
+        'rev_lemoine': {
+            msg: "Lemoine a échoué au niveau 2. Il n'avait pas l'instinct. Tu es allé plus loin que lui.",
+            choices: [
+                { txt: "Qu'est-ce qui se passe maintenant ?", next: 'rev_end' }
+            ]
+        },
+        'rev_test': {
+            msg: "Un test grandeur nature. La peur est le seul vrai moteur de compétence.",
+            choices: [
+                { txt: "Je vais vous dénoncer.", next: 'rev_threat' },
+                { txt: "Je suis prêt pour la suite.", next: 'rev_join' }
+            ]
+        },
+        'rev_monster': { msg: "Je suis nécessaire. Le monde est froid, soldat. Il faut des hommes de glace pour le traverser.", choices: [{txt:"...", next: 'rev_final'}] },
+        'rev_success': { msg: "Oui. Tu as réussi. Tu fais partie de l'élite maintenant. Mon élite.", choices: [{txt:"Je ne travaille pas pour vous.", next: 'rev_final'}] },
+        'rev_threat': { msg: "Dénoncer qui ? Je suis le système. Je suis partout. Tu viens juste de prouver ta valeur.", choices: [{txt:"...", next: 'rev_final'}] },
+        'rev_join': { msg: "C'est ce que j'espérais entendre. Bienvenue dans le vrai monde.", choices: [{txt:"...", next: 'rev_final'}] },
+        'rev_end': { msg: "Maintenant ? Tu attends mes ordres. Obsidian est en veille. Mais je te surveille.", choices: [{txt:"...", next: 'rev_final'}] },
+        'rev_final': { msg: "Fin de la simulation. Déconnexion.", choices: [] },
+
+
+        // --- INDICES GRADUELS ---
+        'hint_lvl0_1': { msg: "Tu bloques ? Lis les fichiers.", choices: [] },
+        'hint_lvl0_2': { msg: "GHOST. 404. Le format est [NOM]-[ID].", choices: [] },
+        'hint_lvl0_3': { msg: "Tape 'LOGIN GHOST-404'.", choices: [] },
+
+        'hint_lvl1_1': { msg: "Tu es admin mais sans droits. Il faut une commande d'élévation.", choices: [] },
+        'hint_lvl1_2': { msg: "Cherche 'SUDO' dans la note.", choices: [] },
+        'hint_lvl1_3': { msg: "Tape 'SUDO DECRYPT'.", choices: [] },
+
+        'hint_lvl2_1': { msg: "Vigenère a besoin d'une clé. Élément 74.", choices: [] },
+        'hint_lvl2_2': { msg: "Ce symbole est 'W'. Tableau périodique.", choices: [] },
+        'hint_lvl2_3': { msg: "C'est le TUNGSTENE. Tape 'DECRYPT TUNGSTENE [texte]'.", choices: [] },
+
+        'hint_lvl3_1': { msg: "Le fichier historique est corrompu. La date n'y est pas.", choices: [] },
+        'hint_lvl3_2': { msg: "Cette opération a eu lieu sur votre serveur Discord. Cherche 'Of The Dark Night'.", choices: [] },
+        'hint_lvl3_3': { msg: "C'était le 12 Août 2024. Tape 12/08/2024.", choices: [] },
+
+        'hint_lvl4_1': { msg: "Utilise Google Maps avec les coordonnées du niveau précédent.", choices: [] },
+        'hint_lvl4_2': { msg: "Cherche 54.255 N, 58.103 E. Ne t'arrête pas au district administratif.", choices: [] },
+        'hint_lvl4_3': { msg: "C'est une montagne : Le Mont Yamantau. Tape 'CIBLER YAMANTAU'.", choices: [] },
+
+        'hint_lvl5_1': { msg: "Lis le profil. Roche volcanique noire.", choices: [] },
+        'hint_lvl5_2': { msg: "Une roche noire tranchante comme du verre. Dans Minecraft aussi.", choices: [] },
+        'hint_lvl5_3': { msg: "C'est l'OBSIDIENNE (OBSIDIAN). Tape 'IDENTIFIER OBSIDIAN'.", choices: [] },
+
+        'hint_lvl6_1': { msg: "Regarde le voltage d'abord.", choices: [] },
+        'hint_lvl6_2': { msg: "Voltage > 900 = Vert. Sinon regarde si le serial est Pair ou Impair.", choices: [] },
+        'hint_lvl6_3': { msg: "Pair = Rouge. Impair = Bleu. (Sauf si voltage > 900).", choices: [] },
+
+        'hint_lvl7_1': { msg: "Regarde le fichier TRACE_RESEAU.log pour trouver l'IP.", choices: [] },
+        'hint_lvl7_2': { msg: "L'IP est celle du Proxy Admin : 10.24.88.99.", choices: [] },
+        'hint_lvl7_3': { msg: "Tape 'TRACER 10.24.88.99'.", choices: [] }
+    };
+
+    const GAME_STATE = {
+        level: 0,
+        bombTime: 90, 
+        bombActive: false,
+        bombSerial: Math.floor(Math.random() * 1000) + 1000, 
+        bombVoltage: Math.floor(Math.random() * 500) + 700, 
+        hackerActive: false, 
+        chatOpen: false,     
+        wiresCut: { red: false, blue: false, green: false },
+        failCount: 0 
+    };
+
+    // --- MOTEUR ---
+    const outputDiv = document.getElementById('output');
+    const inputField = document.getElementById('command-input');
+    const promptSpan = document.querySelector('.prompt');
+    const chatModal = document.getElementById('hacker-modal');
+    const chatHistory = document.getElementById('chat-history');
+    const chatChoices = document.getElementById('chat-choices');
+    const textInputContainer = document.getElementById('text-input-container');
+    const chatInput = document.getElementById('chat-input');
+    const bombTimerDiv = document.getElementById('bomb-timer');
+    const chatHeader = document.getElementById('chat-header');
+
+    // --- DRAG & DROP ---
+    let isDragging = false;
+    let currentX, currentY, initialX, initialY;
+    let xOffset = 0, yOffset = 0;
+
+    chatHeader.addEventListener("mousedown", dragStart);
+    document.addEventListener("mouseup", dragEnd);
+    document.addEventListener("mousemove", drag);
+
+    function dragStart(e) {
+        if(e.target.closest('.chat-controls')) return;
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+        if (e.target === chatHeader || e.target.parentNode === chatHeader) {
+            isDragging = true;
+        }
+    }
+
+    function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            xOffset = currentX;
+            yOffset = currentY;
+            setTranslate(currentX, currentY, chatModal);
+        }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+
+    function minimizeChat() { chatModal.classList.add('minimized'); }
+    function toggleChat() {
+        if(chatModal.classList.contains('minimized')) {
+            chatModal.classList.remove('minimized');
+            GAME_STATE.chatOpen = true;
+            chatModal.style.display = "flex";
+            return;
+        }
+        GAME_STATE.chatOpen = !GAME_STATE.chatOpen;
+        chatModal.style.display = GAME_STATE.chatOpen ? "flex" : "none";
+        if(GAME_STATE.chatOpen) inputField.focus(); 
+    }
+
+    // --- BOOT SEQUENCE ---
+    const TEAM_NAMES = ['FURIES', 'ICEMAN', 'NICOLSTAFF', 'AZEN', 'OLIV', 'MIKODÉDÉ', 'DAMIEN'];
+    
+    function startBootSequence() {
+        document.getElementById('launch-btn').style.display = 'none';
+        const logDiv = document.getElementById('boot-log');
+        logDiv.style.display = 'block';
+        
+        const dateDiv = document.createElement('div');
+        dateDiv.innerHTML = "INITIALISATION DU NOYAU : 14 NOVEMBRE 2023<br>----------------------------------------";
+        dateDiv.style.color = "#888";
+        logDiv.appendChild(dateDiv);
+
+        let interval = setInterval(() => {
+            const randomHex = Math.random().toString(16).substr(2, 8).toUpperCase();
+            let line = `SYSTEM_CHECK: 0x${randomHex} ... OK`;
+            
+            if (Math.random() > 0.85) {
+                const name = TEAM_NAMES[Math.floor(Math.random() * TEAM_NAMES.length)];
+                line = `> USER_DETECT: <span class="highlight-name">${name}</span> [FORCE_OP_FR] ... VERIFIED`;
+            } else if (Math.random() > 0.9) {
+                 line = `> MODULE: FORCE_OPERATIONNELLE_FR ... LOADED`;
+            }
+
+            const p = document.createElement('div');
+            p.innerHTML = line;
+            logDiv.appendChild(p);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }, 50);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            const p = document.createElement('div');
+            p.innerHTML = "<br>> SYSTEM READY. LAUNCHING INTERFACE...";
+            p.style.color = "#fff";
+            logDiv.appendChild(p);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            setTimeout(() => {
+                document.getElementById('boot-screen').style.opacity = 0;
+                setTimeout(() => {
+                    document.getElementById('boot-screen').style.display = 'none';
+                    document.getElementById('monitor-casing').style.opacity = 1;
+                    bootTerminal();
+                }, 1000);
+            }, 1500);
+        }, 5500); 
+    }
+
+    function print(text, type = "") {
+        const p = document.createElement('div');
+        p.className = type;
+        p.textContent = text;
+        outputDiv.appendChild(p);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    }
+
+    function clearTerminal() { outputDiv.innerHTML = ""; }
+    function resetGame() { localStorage.clear(); location.reload(); }
+
+    function updatePrompt() {
+        const roles = ["GUEST", "USER", "ANALYSTE", "ANALYSTE", "ANALYSTE", "ANALYSTE", "ROOT", "ROOT", "FIN"];
+        const role = roles[GAME_STATE.level] || "UNK";
+        promptSpan.textContent = `${role}@FORCE-OPS:~$`;
+        
+        document.getElementById('hud-user').textContent = role;
+        document.getElementById('hud-sec').textContent = `NIV ${GAME_STATE.level}`;
+        
+        const missions = [
+            "Identifiez-vous.",
+            "Lancez le décryptage (SUDO).",
+            "Clé Vigenère requise (Élément 74).",
+            "Analysez le signal audio.",
+            "Identifiez la cible (Recherche Google).",
+            "Identifiez l'ennemi (Code Roche Noire).",
+            "DÉSAMORCEZ LA BOMBE.",
+            "Tracez l'origine du signal (LOGS).",
+            "MISSION TERMINÉE."
+        ];
+        document.getElementById('hud-mission').textContent = missions[GAME_STATE.level] || "Terminé";
+
+        const cmds = [
+            "LOGIN [ID]",
+            "SUDO [CMD]",
+            "DECRYPT [CLE] [TXT]",
+            "ANALYSER [FICHIER]",
+            "CIBLER [LIEU]",
+            "IDENTIFIER [NOM]",
+            "STATUS / COUPER [FIL]",
+            "TRACER [IP]",
+            "EXIT"
+        ];
+        let cmdHtml = cmds[GAME_STATE.level] ? `<div style="color:#fff;font-weight:bold">${cmds[GAME_STATE.level]}</div>` : "";
+        cmdHtml += `<div class="dim">LS, CAT, CLEAR</div><div style="color:var(--term-ice); cursor:pointer" onclick="toggleChat()">HOMME_GLACE (Chat)</div>`;
+        document.getElementById('hud-commands').innerHTML = cmdHtml;
+    }
+
+    // --- CHAT SYSTEM ---
+    function addToChat(sender, message) {
+        if (!GAME_STATE.chatOpen && sender === "ICEMAN") {
+            GAME_STATE.chatOpen = true;
+            chatModal.style.display = "flex";
+            chatModal.classList.remove('minimized');
+        }
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg ${sender.toLowerCase()}`;
+        
+        const metaSpan = document.createElement('span');
+        metaSpan.className = 'msg-meta';
+        metaSpan.textContent = sender === "ICEMAN" ? `[HOMME_GLACE] ${new Date().toLocaleTimeString()}` : `[MOI] ${new Date().toLocaleTimeString()}`;
+        
+        const textSpan = document.createElement('span');
+        textSpan.innerText = message;
+        
+        msgDiv.appendChild(metaSpan);
+        msgDiv.appendChild(textSpan);
+        chatHistory.appendChild(msgDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    function startDialogue(nodeId) {
+        const node = DIALOGUE_TREE[nodeId];
+        if (!node) return;
+        setTimeout(() => {
+            addToChat("ICEMAN", node.msg);
+            renderChoices(node.choices);
+        }, 600);
+    }
+
+    function getBackToWorkMsg() {
+        return CLOSING_PHRASES[Math.floor(Math.random() * CLOSING_PHRASES.length)];
+    }
+
+    function renderChoices(choices) {
+        chatChoices.innerHTML = "";
+        textInputContainer.style.display = "none";
+        
+        if (!choices || choices.length === 0) return;
+
+        choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = "choice-btn";
+            btn.textContent = "> " + choice.txt;
+            btn.onclick = () => handleChoiceClick(choice);
+            chatChoices.appendChild(btn);
+        });
+    }
+
+    function handleChoiceClick(choice) {
+        chatChoices.innerHTML = ""; 
+        setTimeout(() => {
+            addToChat("PLAYER", choice.txt);
+            if (choice.next) {
+                if (choice.next === 'END_CONVERSATION') {
+                    setTimeout(() => addToChat("ICEMAN", getBackToWorkMsg()), 600);
+                } else {
+                    startDialogue(choice.next);
+                }
+            }
+        }, 300);
+    }
+
+    // --- GAME LOGIC ---
+
+    function nextLevel() {
+        GAME_STATE.level++;
+        GAME_STATE.failCount = 0; 
+        save();
+        updatePrompt();
+        
+        const randomMsg = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
+        
+        // Pas de message de succès auto pour les niveaux finaux qui ont des dialogues scriptés
+        if(GAME_STATE.level < 7) {
+            setTimeout(() => addToChat("ICEMAN", randomMsg), 500);
+        }
+
+        if (DIALOGUE_TREE[`story_after_lvl${GAME_STATE.level}`]) {
+             setTimeout(() => startDialogue(`story_after_lvl${GAME_STATE.level}`), 2500);
+        }
+    }
+
+    function bootTerminal() {
+        const saved = localStorage.getItem('fo_v6_lvl');
+        if (saved) GAME_STATE.level = parseInt(saved);
+        
+        print("FORCE OPÉRATIONNELLE - OSINT V6.0", "ascii-art");
+        print("INITIALISATION DU TERMINAL...", "dim");
+        setTimeout(() => {
+            updatePrompt();
+            if (GAME_STATE.level === 6) startBombSequence();
+            else print("Système prêt. Tapez 'LS' pour voir les fichiers.", "success");
+            
+            if (!saved || GAME_STATE.level === 0) {
+                setTimeout(() => startDialogue('intro'), 1500);
+            }
+        }, 800);
+    }
+
+    function save() { localStorage.setItem('fo_v6_lvl', GAME_STATE.level); }
+
+    function registerFailure() {
+        GAME_STATE.failCount++;
+        if (GAME_STATE.failCount === 3) startDialogue(`hint_lvl${GAME_STATE.level}_1`);
+        if (GAME_STATE.failCount === 6) startDialogue(`hint_lvl${GAME_STATE.level}_2`);
+        if (GAME_STATE.failCount === 9) startDialogue(`hint_lvl${GAME_STATE.level}_3`);
+    }
+
+    function processCommand(raw) {
+        const parts = raw.trim().split(' ');
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+
+        print(`${promptSpan.textContent} ${raw}`, "dim");
+
+        switch(cmd) {
+            case "help": print("Commandes: LS, CAT [FICHIER], CLEAR. Voir Chat pour aide.", "info"); break;
+            case "ls": 
+            case "dir":
+                const files = FILES[`level${GAME_STATE.level}`] || {};
+                for(let f in files) print(f, "info");
+                if(Object.keys(files).length === 0) print("Répertoire vide.", "dim");
+                break;
+            case "cat":
+            case "lire":
+                if(!args[0]) {
+                    print("Erreur: Quel fichier ?", "error");
+                    registerFailure();
+                    return;
+                }
+                const levelFiles = FILES[`level${GAME_STATE.level}`] || {};
+                const fileName = Object.keys(levelFiles).find(key => key.toLowerCase() === args[0].toLowerCase());
+                
+                if(fileName) print(levelFiles[fileName]);
+                else {
+                    print("Fichier introuvable.", "error");
+                    registerFailure();
+                }
+                break;
+            case "clear": clearTerminal(); break;
+            
+            case "chat":
+            case "vigil":
+                toggleChat();
+                break;
+            
+            case "login":
+                if(GAME_STATE.level !== 0) { print("Déjà connecté.", "dim"); return; }
+                if(args[0] && args[0].toUpperCase().includes("GHOST-404")) {
+                    print("AUTHENTIFICATION RÉUSSIE.", "success");
+                    nextLevel();
+                } else {
+                    print("ÉCHEC. Format invalide.", "error");
+                    registerFailure();
+                }
+                break;
+
+            case "sudo":
+                if(GAME_STATE.level !== 1) { print("Commande inconnue.", "dim"); return; }
+                if(args[0] && args[0].toLowerCase() === "decrypt") {
+                    print("OUTILS DE DÉCRYPTAGE CHARGÉS.", "success");
+                    nextLevel();
+                } else {
+                    print("Commande SUDO invalide.", "error");
+                    registerFailure();
+                }
+                break;
+
+            case "decrypt":
+                if(GAME_STATE.level !== 2) { print("Outil non disponible.", "error"); return; }
+                if(args[0] && args[0].toUpperCase() === "TUNGSTENE") {
+                    print("CLÉ CONFIRMÉE.", "success");
+                    print("MESSAGE : 'Le silo est armé...'", "cyan-glow");
+                    nextLevel();
+                } else {
+                    print("CLÉ INCORRECTE.", "error");
+                    registerFailure();
+                }
+                break;
+            
+            case "analyser":
+                if(GAME_STATE.level !== 3) { print("Pas de fichier à analyser.", "error"); return; }
+                if(args[0] && args[0].toLowerCase().includes("spectre")) {
+                    triggerHackerQuiz();
+                } else {
+                    print("Fichier inconnu.", "error");
+                    registerFailure();
+                }
+                break;
+
+            case "cibler":
+                if(GAME_STATE.level !== 4) { print("Ciblage impossible maintenant.", "error"); return; }
+                const target = args.join(" ").toUpperCase();
+                // Accepte YAMANTAU, IAMANTAOU (Français), et LAMANTAOU (Erreur de lecture fréquente I/L) + MEZHGORYE (Ville fermée associée)
+                if(target.includes("YAMANTAU") || target.includes("MEZHGORYE") || target.includes("IAMANTAOU") || target.includes("LAMANTAOU")) {
+                    print("CIBLE VERROUILLÉE : MONT IAMANTAOU (RUSSIE).", "success");
+                    print("INTERCEPTION DES DONNÉES EN COURS...", "dim");
+                    setTimeout(() => nextLevel(), 1500);
+                } else if (target.includes("INZERSKIY") || target.includes("BELORETSKY")) {
+                    print("ERREUR: '"+target+"' EST LE DISTRICT ADMINISTRATIF.", "error");
+                    print("NOTE: LA CIBLE EST LE RELIEF MONTAGNEUX LUI-MÊME.", "info");
+                    registerFailure();
+                } else {
+                    print("CIBLE INCORRECTE. Vérifiez vos coordonnées.", "error");
+                    registerFailure();
+                }
+                break;
+
+            case "identifier":
+                if(GAME_STATE.level !== 5) { print("Identification impossible.", "error"); return; }
+                const enemy = args.join(" ").toUpperCase();
+                if(enemy.includes("OBSIDIAN") || enemy.includes("OBSIDIENNE")) {
+                    print("IDENTITÉ CONFIRMÉE : OBSIDIAN.", "success");
+                    print("INTERCEPTION DES DONNÉES EN COURS...", "dim");
+                    setTimeout(() => nextLevel(), 1500);
+                } else {
+                    print("IDENTITÉ INCORRECTE.", "error");
+                    registerFailure();
+                }
+                break;
+            
+            case "status":
+                if(GAME_STATE.level === 6) {
+                    print(`BOMBE K-79 | SERIAL: ...${GAME_STATE.bombSerial} | VOLTAGE: ${GAME_STATE.bombVoltage}V`, "info");
+                    print(`FILS COUPÉS: R:${GAME_STATE.wiresCut.red?'[X]':'[ ]'} B:${GAME_STATE.wiresCut.blue?'[X]':'[ ]'} V:${GAME_STATE.wiresCut.green?'[X]':'[ ]'}`, "dim");
+                } else print("Système nominal.", "dim");
+                break;
+
+            case "couper":
+                if(GAME_STATE.level === 6) cutWire(args[0]);
+                else print("Aucune cible.", "dim");
+                break;
+
+            case "tracer":
+                if(GAME_STATE.level !== 7) { print("Traçage non autorisé.", "error"); return; }
+                const ip = args[0];
+                if(ip && (ip === "10.24.88.99")) {
+                    print("TRAÇAGE EN COURS...", "dim");
+                    setTimeout(() => {
+                        print("ORIGINE DU SIGNAL : [LOCALHOST] - PROXY_ADMIN_ICEMAN", "red-glow");
+                        print("IDENTITÉ : L'HOMME DE GLACE.", "red-glow");
+                        startDialogue('revelation_start');
+                    }, 2000);
+                } else {
+                    print("IP CIBLE INCORRECTE. VOIR LOGS.", "error");
+                    registerFailure();
+                }
+                break;
+
+            case "exit":
+                if(GAME_STATE.level === 8) {
+                    print("DÉCONNEXION...", "dim");
+                    setTimeout(() => location.reload(), 2000);
+                }
+                break;
+
+            case "reset": resetGame(); break;
+            default: 
+                print("Commande inconnue.", "error");
+                registerFailure();
+        }
+    }
+
+    // --- QUIZ ICEMAN (NIV 3) ---
+    function triggerHackerQuiz() {
+        GAME_STATE.hackerActive = true;
+        if(!GAME_STATE.chatOpen) toggleChat();
+        
+        chatChoices.innerHTML = "";
+        textInputContainer.style.display = "flex";
+        
+        addToChat("ICEMAN", "Je bloque l'analyse. Vérification de sécurité protocolaire.");
+        addToChat("ICEMAN", "Je dois m'assurer que tu es un agent actif. Quel jour a eu lieu l'Opération 'Of The Dark Night' ? (Format: JJ/MM/AAAA)");
+    }
+
+    chatInput.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' && chatInput.value.trim() !== "") {
+            const val = chatInput.value.trim();
+            addToChat("PLAYER", val);
+            chatInput.value = "";
+
+            if(val.includes("12/08/2024")) {
+                addToChat("ICEMAN", "Correct. J'envoie les coordonnées.");
+                GAME_STATE.hackerActive = false;
+                textInputContainer.style.display = "none";
+                setTimeout(() => {
+                    nextLevel();
+                }, 3000);
+            } else {
+                addToChat("ICEMAN", "Faux. Consulte tes archives Discord si tu as oublié.");
+                registerFailure();
+            }
+        }
+    });
+
+    // --- BOMBE ---
+    let timerInterval;
+
+    function startBombSequence() {
+        clearTerminal();
+        print("!!! ALERTE CRITIQUE !!!", "red-glow");
+        print("BOMBE K-79 ACTIVÉE.", "red-glow");
+        bombTimerDiv.style.display = "block";
+        GAME_STATE.bombActive = true;
+        
+        addToChat("ICEMAN", "Une K-79 ! STATUS pour le voltage, et lis le manuel PDF.");
+        
+        timerInterval = setInterval(() => {
+            GAME_STATE.bombTime--;
+            const min = Math.floor(GAME_STATE.bombTime / 60);
+            const sec = GAME_STATE.bombTime % 60;
+            bombTimerDiv.textContent = `0${min}:${sec < 10 ? '0'+sec : sec}`;
+            
+            if(GAME_STATE.bombTime <= 0) {
+                clearInterval(timerInterval);
+                gameOver("BOUM. DÉTONATION.");
+            }
+        }, 1000);
+    }
+
+    function cutWire(color) {
+        if(!color) { print("Couper quoi ? (ROUGE, BLEU, VERT)", "error"); return; }
+        color = color.toUpperCase();
+        
+        const isHighVoltage = GAME_STATE.bombVoltage > 900;
+        const isPair = (GAME_STATE.bombSerial % 2 === 0);
+        const cuts = GAME_STATE.wiresCut; 
+        const isFirstCut = !cuts.red && !cuts.blue && !cuts.green;
+
+        let valid = false;
+        
+        if (color === "VERT") {
+            if (isHighVoltage && !isFirstCut) return gameOver("ERREUR : Voltage Élevé requiert Vert en PREMIER.");
+            cuts.green = true; valid = true;
+        } 
+        else if (color === "ROUGE") {
+            if (!isHighVoltage && isPair && !isFirstCut) return gameOver("ERREUR : Serial Pair requiert Rouge en PREMIER.");
+            if (!isHighVoltage && !isPair && isFirstCut) return gameOver("ERREUR : Serial Impair interdit Rouge en PREMIER.");
+            cuts.red = true; valid = true;
+        } 
+        else if (color === "BLEU") {
+            if (!isHighVoltage && !isPair && !isFirstCut) return gameOver("ERREUR : Serial Impair requiert Bleu en PREMIER.");
+            if (!isHighVoltage && !isPair && isFirstCut) return gameOver("ERREUR : Serial Pair interdit Bleu en PREMIER.");
+            cuts.blue = true; valid = true;
+        } 
+        
+        if(valid) {
+            print(`CABLE ${color} SECTIONNÉ.`, "dim");
+            addToChat("ICEMAN", `Bien joué. ${color} coupé.`);
+        }
+        else { print("Couleur inconnue.", "error"); return; }
+
+        if(cuts.red && cuts.blue && cuts.green) winGame();
+    }
+
+    function gameOver(reason) {
+        clearInterval(timerInterval);
+        GAME_STATE.bombActive = false;
+        clearTerminal();
+        print(reason, "red-glow");
+        addToChat("ICEMAN", "Échec.");
+        setTimeout(() => resetGame(), 5000);
+    }
+
+    function winGame() {
+        clearInterval(timerInterval);
+        bombTimerDiv.style.color = "#0f0";
+        bombTimerDiv.style.borderColor = "#0f0";
+        clearTerminal();
+        print("DÉSAMORÇAGE RÉUSSI.", "success");
+        nextLevel();
+    }
+
+    inputField.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {
+            const val = inputField.value;
+            inputField.value = '';
+            processCommand(val);
+        }
+    });
+
+</script>
+</body>
+</html>
