@@ -635,20 +635,58 @@
         'story_lvl2_honesty': { msg: "Elle paie en sommeil. Tu dors mieux que tes supérieurs, crois-moi.", choices: [{txt:"Pas faux.", next: 'END_CONVERSATION'}] },
         'story_lvl2_spy': { msg: "Je 'veille'. C'est mon travail. Si je ne t'avais pas espionné, tu serais déjà grillé par la sécurité.", choices: [{txt:"Super...", next: 'END_CONVERSATION'}] },
 
-        'story_after_lvl3': { msg: "Date confirmée. J'extrais les coordonnées cachées dans l'audio... Attends... 54.255 Nord, 58.103 Est. Ça ne me dit rien de bon.", choices: [{ txt: "C'est où ?", next: 'story_lvl3_where' }, { txt: "Je lance la recherche.", next: 'story_lvl3_search' }] },
-        'story_lvl3_where': { msg: "C'est ce que tu dois trouver. Utilise tes outils externes. Google Maps est ton ami. Cherche ce qu'il y a à ces coordonnées.", choices: [{txt:"Je m'en occupe.", next: 'END_CONVERSATION'}] },
-        'story_lvl3_search': { msg: "Fais vite. Si ces coordonnées sont ce que je pense, on est assis sur un volcan.", choices: [{txt:"Je cherche.", next: 'END_CONVERSATION'}] },
+        // STORY BEAT LEVEL 3 : Entrée après Decryptage Tungstène
+        'story_after_lvl3': { 
+            msg: "Le Tungstène. Projet 74. Mon père a travaillé dessus... Le message décrypté mentionne un fichier audio. Je l'ai isolé.", 
+            choices: [
+                { txt: "Je l'analyse tout de suite.", next: 'story_lvl3_go' }, 
+                { txt: "Il y a un problème ?", next: 'story_lvl3_secu' }
+            ] 
+        },
+        'story_lvl3_secu': { msg: "Oui. Un protocole de sécurité actif. Quand tu lanceras l'analyse, le système exigera une confirmation d'identité. Prépare-toi.", choices: [{txt:"Je suis prêt.", next: 'END_CONVERSATION'}] },
+        'story_lvl3_go': { msg: "Attention. Le fichier est piégé par un test d'identité. Si tu échoues à la question de sécurité, on sera déconnectés.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
 
-        'story_after_lvl4': { msg: "Yamantau... Je le savais. La montagne maudite. C'est là qu'ils se cachent. Le dossier 'PROFIL_X' est accessible.", choices: [{ txt: "Qui se cache ?", next: 'story_lvl4_who' }, { txt: "Je consulte le dossier.", next: 'story_lvl4_lock' }] },
-        'story_lvl4_who': { msg: "L'ennemi a un nom de code. Trouve-le dans le dossier et identifie-le. On doit savoir qui on affronte.", choices: [{txt:"Je regarde.", next: 'END_CONVERSATION'}] },
-        'story_lvl4_lock': { msg: "Cherche l'indice sur la roche noire. C'est la clé de son identité.", choices: [{txt:"Reçu.", next: 'END_CONVERSATION'}] },
+        // STORY BEAT LEVEL 4 : Entrée après Quiz Date
+        'story_after_lvl4': { 
+            msg: "Date confirmée. Accès déverrouillé. J'ai extrait les coordonnées cachées dans le spectre audio : 54.255 Nord, 58.103 Est.", 
+            choices: [
+                { txt: "Qu'est-ce qu'il y a là-bas ?", next: 'story_lvl4_what' }, 
+                { txt: "Je cherche sur la carte.", next: 'story_lvl4_search' }
+            ] 
+        },
+        'story_lvl4_what': { msg: "C'est ce que tu dois trouver. Utilise Google Maps. C'est un lieu géographique précis, pas une ville. Une montagne.", choices: [{txt:"Je m'en occupe.", next: 'END_CONVERSATION'}] },
+        'story_lvl4_search': { msg: "Fais vite. Si ces coordonnées sont ce que je pense, on est assis sur un volcan.", choices: [{txt:"Je cherche.", next: 'END_CONVERSATION'}] },
 
-        'story_after_lvl5': { msg: "OBSIDIAN ! Je pensais que c'était une légende... ATTENTION ! DÉTECTION DE LANCEMENT !", choices: [{ txt: "De quoi ?!", next: 'story_lvl5_bomb' }] },
-        'story_lvl5_bomb': { msg: "Il sait qu'on l'a trouvé ! Il active la bombe K-79 à distance ! Désamorce-la immédiatement ou tout est fini !", choices: [{txt:"Merde !", next: 'END_CONVERSATION'}] },
+        // STORY BEAT LEVEL 5 : Entrée après Yamantau
+        'story_after_lvl5': { 
+            msg: "Yamantau... Je le savais. La montagne maudite. C'est là qu'ils se cachent. Le dossier 'PROFIL_X' vient d'apparaître.", 
+            choices: [
+                { txt: "Qui se cache ?", next: 'story_lvl5_who' }, 
+                { txt: "Je consulte le dossier.", next: 'story_lvl5_read' }
+            ] 
+        },
+        'story_lvl5_who': { msg: "L'ennemi a un nom de code. Trouve-le dans le dossier et identifie-le. On doit savoir qui on affronte.", choices: [{txt:"Je regarde.", next: 'END_CONVERSATION'}] },
+        'story_lvl5_read': { msg: "Cherche l'indice sur la roche noire. C'est la clé de son identité.", choices: [{txt:"Reçu.", next: 'END_CONVERSATION'}] },
 
-        'story_after_lvl6': { msg: "C'était moins une. La bombe est inerte. Joli travail. Maintenant, finis le boulot. Trace le signal d'activation.", choices: [{ txt: "Pourquoi faire ?", next: 'story_lvl6_why' }, { txt: "Je lance le traçage.", next: 'story_lvl6_trace' }] },
-        'story_lvl6_why': { msg: "Pour trouver l'IP source. Obsidian ne travaille jamais seul. Regarde les LOGS et utilise la commande TRACER.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
-        'story_lvl6_trace': { msg: "Trouve l'IP source dans le fichier 'LOGS_ACTIVATION.txt' et remonte la piste. On doit savoir d'où ça vient.", choices: [{txt:"Je m'y mets.", next: 'END_CONVERSATION'}] },
+        // STORY BEAT LEVEL 6 : Entrée après Obsidian (BOMBE !)
+        'story_after_lvl6': { 
+            msg: "OBSIDIAN ! Je pensais que c'était une légende... ATTENTION ! DÉTECTION DE LANCEMENT ! Il a activé la bombe !", 
+            choices: [
+                { txt: "Quoi ?!", next: 'story_lvl6_panic' }
+            ] 
+        },
+        'story_lvl6_panic': { msg: "Il sait qu'on l'a trouvé ! C'est un piège final ! Désamorce cette bombe immédiatement ou tout est fini !", choices: [{txt:"J'y vais !", next: 'END_CONVERSATION'}] },
+
+        // STORY BEAT LEVEL 7 : Entrée après Désamorçage
+        'story_after_lvl7': { 
+            msg: "C'était moins une. La bombe est inerte. Joli travail. Maintenant, finis le boulot. Trace le signal d'activation.", 
+            choices: [
+                { txt: "Pourquoi faire ?", next: 'story_lvl7_why' }, 
+                { txt: "Je lance le traçage.", next: 'story_lvl7_trace' }
+            ] 
+        },
+        'story_lvl7_why': { msg: "Pour trouver l'IP source. Obsidian ne travaille jamais seul. Regarde les LOGS et utilise la commande TRACER.", choices: [{txt:"Compris.", next: 'END_CONVERSATION'}] },
+        'story_lvl7_trace': { msg: "Trouve l'IP source dans le fichier 'LOGS_ACTIVATION.txt' et remonte la piste. On doit savoir d'où ça vient.", choices: [{txt:"Je m'y mets.", next: 'END_CONVERSATION'}] },
 
         'revelation_start': { msg: "Je vois que tu as trouvé l'IP. Et tu as compris à qui elle appartient.", choices: [{ txt: "C'est votre IP ! C'est vous Obsidian ?", next: 'rev_truth' }, { txt: "Pourquoi vous avez fait ça ?", next: 'rev_why' }] },
         'rev_truth': { msg: "Obsidian n'est pas une personne. C'est un protocole de test. Et je suis son architecte.", choices: [{ txt: "Tout ça n'était qu'un test ?", next: 'rev_test' }, { txt: "Vous avez failli tous nous tuer !", next: 'rev_risk' }] },
